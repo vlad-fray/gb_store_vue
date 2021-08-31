@@ -1,0 +1,117 @@
+:root {
+  --color-main-bg: #41b3a3;
+  --color-secondary-bg: #85dcbb;
+  --color-main-text: #1d4e48;
+  --color-accent: #e27d60;
+
+  --bp-large: 1200px;
+  --bp-medium: 900px;
+  --bp-small: 700px;
+  --bp-smallest: 400px;
+}
+
+*,
+*:before,
+*:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+nav,
+footer,
+header,
+aside {
+  display: block;
+}
+
+input,
+button,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a,
+a:visited,
+a:hover {
+  text-decoration: none;
+}
+
+ul li {
+  list-style: none;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--color-main-bg);
+}
+
+.container {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+/* .main {
+  &__heading {
+    padding-top: 1rem;
+    margin-left: 1rem;
+  }
+} */
+
+.hidden {
+  display: none;
+}
+
+.button {
+  color: var(--color-main-text);
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0 2px 5px 0 var(--color-main-bg);
+  background-color: white;
+}
+
+.button:hover {
+  box-shadow: none;
+}
+
+.button:active {
+  color: white;
+  background-color: var(--color-main-bg);
+}
+
+.overlay {
+  content: '';
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #00000080;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.modal {
+  content: '';
+  position: fixed;
+  z-index: 2;
+  left: 50%;
+  top: 10%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 1600px;
+  max-height: 80%;
+  overflow-y: scroll;
+}
