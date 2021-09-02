@@ -41,11 +41,7 @@
     </label>
 
     <div class="order-form__actions">
-      <Button
-        @onClick.prevent="submitForm"
-        type="submit"
-        class="button--cart-make-order"
-      >
+      <Button type="submit" class="button--cart-make-order">
         Make Order
       </Button>
       <Button @onClick="closeForm" type="button" class="button--close-order">

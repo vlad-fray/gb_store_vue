@@ -80,21 +80,15 @@ export default {
         itemCal: currentGood.cal,
       };
 
-      // this.state.cart.totalPrice += currentGood.price;
-      // this.state.cart.totalCal += currentGood.cal;
-      // this.state.cart.goods.push(newCartItem);
-
       this.state.cart = {
         ...this.state.cart,
         totalPrice: this.state.cart.totalPrice + currentGood.price,
         totalCal: this.state.cart.totalCal + currentGood.cal,
         goods: [...this.state.cart.goods, newCartItem],
       };
-
-      // console.log(this.state.cart);
     },
+
     submitOrder(userData) {
-      console.log("ff");
       const orderId = Math.floor(Math.random() * 10000);
       this.state.orderList.push({
         id: orderId,
