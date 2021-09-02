@@ -41,11 +41,8 @@
   </div>
 
   <div v-else class="cart">
-    Your order:
-    <div class="cart__content">
-      {{ orderList }}
-    </div>
-    <button class="button button--cancel-cart" @click="closeCart">Close</button>
+    <h4 class="cart__message">You made an order, wait for a call!</h4>
+    <button class="button button--close-cart" @click="closeCart">Close</button>
   </div>
 </template>
 
@@ -100,20 +97,7 @@ export default {
       this.isOrdering = false;
     },
     submitOrderingForm(userData) {
-      const orderId = Math.floor(Math.random() * 10000);
-      this.orderList.push({
-        id: orderId,
-        userData,
-        orderData: {
-          goods: this.cart.goods,
-          totalPrice: this.cart.totalPrice,
-        },
-      });
-      this.cart = {
-        totalPrice: 0,
-        totalCal: 0,
-        goods: [],
-      };
+      this.$emit("submitOrder", userData);
       this.isOrdering = false;
       this.madeOrder = true;
     },
@@ -122,7 +106,6 @@ export default {
     // console.log(this.data);
     return {
       cart: this.data,
-      orderList: [],
       isEmptyCart: true,
       isOrdering: false,
       madeOrder: false,
@@ -148,8 +131,17 @@ export default {
   justify-content: flex-end;
 }
 
+.cart__message {
+  margin: 1rem;
+}
+
 .button--cancel-cart {
   padding: 1rem;
+}
+.button--close-cart {
+  padding: 1rem;
+  display: block;
+  margin-left: auto;
 }
 
 .button--cart-ordering {

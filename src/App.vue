@@ -2,7 +2,7 @@
   <Header @openCart="openCart" />
 
   <Modal v-if="isCartOpened" @closeModal="closeCart">
-    <Cart @close="closeCart" :data="state.cart" />
+    <Cart @close="closeCart" @submitOrder="submitOrder" :data="state.cart" />
   </Modal>
 
   <Catalog v-if="state.goods" @addToCart="addToCart" :data="state.goods" />
@@ -92,6 +92,24 @@ export default {
       };
 
       // console.log(this.state.cart);
+    },
+    submitOrder(userData) {
+      console.log("ff");
+      const orderId = Math.floor(Math.random() * 10000);
+      this.state.orderList.push({
+        id: orderId,
+        userData,
+        orderData: {
+          goods: this.state.cart.goods,
+          totalPrice: this.state.cart.totalPrice,
+        },
+      });
+      this.state.cart = {
+        totalPrice: 0,
+        totalCal: 0,
+        isOrdering: false,
+        goods: [],
+      };
     },
   },
 };
