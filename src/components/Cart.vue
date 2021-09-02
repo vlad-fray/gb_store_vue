@@ -1,7 +1,20 @@
 <template>
   <div class="cart">
     <div class="cart__content">
-      <CartItem v-if="cart" />
+      <div v-if="cart.goods.length">
+        <CartItem
+          @toggleSup="toggleSupMeal"
+          v-for="good in cart.goods"
+          :key="good.id"
+          :data="good"
+        />
+        <h4 class="cart__price">
+          Total price: {{ cart.totalPrice.toFixed(2) }}$
+        </h4>
+        <h4 class="cart__price">
+          Total calorie: {{ cart.totalCal.toFixed(2) }} cal
+        </h4>
+      </div>
       <h3 v-else>Cart is empty</h3>
     </div>
     <div class="cart__actions">
@@ -17,9 +30,9 @@
 <script>
 import CartOrderForm from "./CartOrderForm.vue";
 import CartItem from "./CartItem.vue";
-import * as store from "../store/store.js";
 
 export default {
+  props: ["data"],
   components: {
     CartOrderForm,
     CartItem,
@@ -28,17 +41,40 @@ export default {
     closeCart() {
       this.$emit("close");
     },
+    toggleSupMeal(burgerId, supId) {
+      const currentItem = this.cart.goods.find(
+        (burger) => burger.id === burgerId
+      );
+
+      const currentSup = currentItem.supplements.find(
+        (sup) => sup.id === supId
+      );
+
+      if (currentSup.isAdded) {
+        this.cart.totalPrice -= currentSup.price;
+        currentItem.itemPrice -= currentSup.price;
+        this.cart.totalCal -= currentSup.cal;
+        currentItem.itemCal -= currentSup.cal;
+      } else {
+        this.cart.totalPrice += currentSup.price;
+        currentItem.itemPrice += currentSup.price;
+        this.cart.totalCal += currentSup.cal;
+        currentItem.itemCal += currentSup.cal;
+      }
+
+      currentSup.isAdded = !currentSup.isAdded;
+    },
   },
   data() {
+    // console.log(this.data);
     return {
       isOrdering: false,
       isEmptyCart: true,
-      cart: null,
+      cart: this.data,
     };
   },
   mounted() {
-    this.cart = { ...store.state.cart };
-    console.log(this.cart);
+    this.cart = this.data;
   },
 };
 </script>
@@ -52,6 +88,7 @@ export default {
 }
 
 .cart__actions {
+  margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
 }

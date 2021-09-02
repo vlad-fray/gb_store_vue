@@ -12,8 +12,6 @@
 
 <script>
 import CatalogItem from "../components/CatalogItem.vue";
-import * as store from "../store/store.js";
-import { API } from "../config.js";
 
 export default {
   props: ["data"],
@@ -21,18 +19,15 @@ export default {
     CatalogItem,
   },
   data() {
+    // console.log(this.data.burgers);
     return {
-      catalog: null,
+      catalog: this.data.burgers,
     };
   },
   methods: {
     addToCart(id) {
-      store.addToCart(id);
+      this.$emit("addToCart", id);
     },
-  },
-  async mounted() {
-    await store.loadCatalogItemsFromDatabase(`${API}/goodsList.json`);
-    this.catalog = { ...store.state.goods.burgers };
   },
 };
 </script>

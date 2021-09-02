@@ -25,7 +25,7 @@ export default {
   props: ["good"],
   methods: {
     addToCart() {
-      console.log(this.good.id);
+      // console.log(this.good.id);
       this.$emit("addItem", this.good.id);
     },
   },
