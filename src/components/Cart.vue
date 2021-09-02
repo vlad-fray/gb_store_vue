@@ -1,7 +1,8 @@
 <template>
   <div class="cart">
     <div class="cart__content">
-      <h3 v-if="isEmptyCart">Cart is empty</h3>
+      <CartItem v-if="cart" />
+      <h3 v-else>Cart is empty</h3>
     </div>
     <div class="cart__actions">
       <button class="button button--cart-ordering">Order</button>
@@ -14,14 +15,14 @@
 </template>
 
 <script>
-import Button from "../UI/Button.vue";
 import CartOrderForm from "./CartOrderForm.vue";
+import CartItem from "./CartItem.vue";
+import * as store from "../store/store.js";
 
 export default {
-  props: ["data", "isOpened"],
   components: {
     CartOrderForm,
-    Button,
+    CartItem,
   },
   methods: {
     closeCart() {
@@ -32,9 +33,13 @@ export default {
     return {
       isOrdering: false,
       isEmptyCart: true,
+      cart: null,
     };
   },
-  mounted() {},
+  mounted() {
+    this.cart = { ...store.state.cart };
+    console.log(this.cart);
+  },
 };
 </script>
 
