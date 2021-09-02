@@ -2,9 +2,9 @@
   <div class="cart-item" :data-id="good.id">
     <h3 class="cart-item__title">
       {{ good.item.title }}
-      <button @click="removeItem" class="button button--remove-item">
+      <Button @onClick="removeItem" class="button--remove-item">
         &#215;
-      </button>
+      </Button>
     </h3>
     <p class="cart-item__info">{{ good.item.price }}$</p>
     <p class="cart-item__info">{{ good.item.cal }} cal</p>
@@ -21,14 +21,14 @@
           <span>{{ sup.title }} </span>
           <span>{{ sup.price }}$ </span>
           <span>{{ sup.cal }} cal </span>
-          <button
-            @click="toggleSup(sup.id)"
-            class="button cart-toggle__button"
+          <Button
+            @onClick="toggleSup(sup.id)"
+            class="cart-toggle__button"
             :class="sup.isAdded ? 'cart-toggle__button--marked' : ''"
             type="button"
           >
             &#10003;
-          </button>
+          </Button>
         </p>
       </div>
     </div>
@@ -43,8 +43,11 @@
 </template>
 
 <script>
+import Button from "../UI/Button.vue";
+
 export default {
   props: ["data"],
+  components: { Button },
   data() {
     // console.log(this.data);
     return {

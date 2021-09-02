@@ -9,20 +9,20 @@
       <h3 class="catalog-item__heading">{{ good.title }}</h3>
       <p class="catalog-item__info">Price: ${{ good.price }}</p>
       <p class="catalog-item__info">Calorie: ${{ good.cal }}</p>
-      <button
-        @click="addToCart"
-        class="button catalog-item__button"
-        type="button"
-      >
+      <Button @onClick="addToCart" class="catalog-item__button" type="button">
         Add to cart
-      </button>
+      </Button>
     </div>
   </div>
 </template>
 
 <script>
+import Button from "../UI/Button.vue";
 export default {
   props: ["good"],
+  components: {
+    Button,
+  },
   methods: {
     addToCart() {
       // console.log(this.good.id);

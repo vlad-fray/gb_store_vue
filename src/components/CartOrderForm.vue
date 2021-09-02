@@ -41,26 +41,24 @@
     </label>
 
     <div class="order-form__actions">
-      <button
-        @click.prevent="submitForm"
+      <Button
+        @onClick.prevent="submitForm"
         type="submit"
-        class="button button--cart-make-order"
+        class="button--cart-make-order"
       >
         Make Order
-      </button>
-      <button
-        @click="closeForm"
-        type="button"
-        class="button button--close-order"
-      >
+      </Button>
+      <Button @onClick="closeForm" type="button" class="button--close-order">
         Close
-      </button>
+      </Button>
     </div>
   </form>
 </template>
 
 <script>
+import Button from "../UI/Button.vue";
 export default {
+  components: { Button },
   methods: {
     closeForm() {
       this.$emit("closeForm");

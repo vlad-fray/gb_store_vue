@@ -19,12 +19,14 @@
       <h3 v-else>Cart is empty</h3>
     </div>
     <div class="cart__actions">
-      <button @click="openOrderingForm" class="button button--cart-ordering">
+      <Button
+        v-if="cart.goods.length"
+        @onClick="openOrderingForm"
+        class="button--cart-ordering"
+      >
         Order
-      </button>
-      <button @click="closeCart" class="button button--cancel-cart">
-        Cancel
-      </button>
+      </Button>
+      <Button @onClick="closeCart" class="button--cancel-cart"> Cancel </Button>
     </div>
   </div>
 
@@ -42,19 +44,21 @@
 
   <div v-else class="cart">
     <h4 class="cart__message">You made an order, wait for a call!</h4>
-    <button class="button button--close-cart" @click="closeCart">Close</button>
+    <Button class="button--close-cart" @onClick="closeCart">Close</Button>
   </div>
 </template>
 
 <script>
 import CartOrderForm from "./CartOrderForm.vue";
 import CartItem from "./CartItem.vue";
+import Button from "../UI/Button.vue";
 
 export default {
   props: ["data"],
   components: {
     CartOrderForm,
     CartItem,
+    Button,
   },
   methods: {
     closeCart() {

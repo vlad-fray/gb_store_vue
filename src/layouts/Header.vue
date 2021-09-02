@@ -2,6 +2,7 @@
   <header class="header">
     <div class="container header-container">
       <h1 class="header__heading">&#127828; Burger shop</h1>
+      <input type="text" class="header-input" />
       <Button @onClick="openCart" class="button--open-cart">&#128722;</Button>
     </div>
   </header>
