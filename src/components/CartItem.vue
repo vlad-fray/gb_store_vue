@@ -2,7 +2,9 @@
   <div class="cart-item" :data-id="good.id">
     <h3 class="cart-item__title">
       {{ good.item.title }}
-      <button class="button button--remove-item">&#215;</button>
+      <button @click="removeItem" class="button button--remove-item">
+        &#215;
+      </button>
     </h3>
     <p class="cart-item__info">{{ good.item.price }}$</p>
     <p class="cart-item__info">{{ good.item.cal }} cal</p>
@@ -30,6 +32,7 @@
         </p>
       </div>
     </div>
+
     <h4 class="cart-item__total">
       Burger price: {{ good.itemPrice.toFixed(2) }}$
     </h4>
@@ -43,7 +46,7 @@
 export default {
   props: ["data"],
   data() {
-    console.log(this.data);
+    // console.log(this.data);
     return {
       good: this.data,
     };
@@ -51,6 +54,9 @@ export default {
   methods: {
     toggleSup(supId) {
       this.$emit("toggleSup", this.good.id, supId);
+    },
+    removeItem() {
+      this.$emit("removeItem", this.good.id);
     },
   },
 };

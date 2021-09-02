@@ -1,8 +1,9 @@
 <template>
-  <div class="cart">
+  <div v-if="!isOrdering && !madeOrder" class="cart">
     <div class="cart__content">
       <div v-if="cart.goods.length">
         <CartItem
+          @removeItem="removeItemFromCart"
           @toggleSup="toggleSupMeal"
           v-for="good in cart.goods"
           :key="good.id"
@@ -18,13 +19,34 @@
       <h3 v-else>Cart is empty</h3>
     </div>
     <div class="cart__actions">
-      <button class="button button--cart-ordering">Order</button>
+      <button @click="openOrderingForm" class="button button--cart-ordering">
+        Order
+      </button>
       <button @click="closeCart" class="button button--cancel-cart">
         Cancel
       </button>
     </div>
   </div>
-  <CartOrderForm />
+
+  <div v-else-if="!madeOrder" class="cart">
+    <h4 class="cart__price">Total price: {{ cart.totalPrice.toFixed(2) }}$</h4>
+    <h4 class="cart__price">
+      Total calorie: {{ cart.totalCal.toFixed(2) }} cal
+    </h4>
+    <CartOrderForm
+      v-if="isOrdering"
+      @submitForm="submitOrderingForm"
+      @closeForm="closeOrderingForm"
+    />
+  </div>
+
+  <div v-else class="cart">
+    Your order:
+    <div class="cart__content">
+      {{ orderList }}
+    </div>
+    <button class="button button--cancel-cart" @click="closeCart">Close</button>
+  </div>
 </template>
 
 <script>
@@ -64,13 +86,46 @@ export default {
 
       currentSup.isAdded = !currentSup.isAdded;
     },
+    removeItemFromCart(itemId) {
+      const itemToDelete = this.cart.goods.find((good) => good.id === itemId);
+      this.cart.totalPrice -= itemToDelete.itemPrice;
+      this.cart.totalCal -= itemToDelete.itemCal;
+
+      this.cart.goods = this.cart.goods.filter((good) => good.id !== itemId);
+    },
+    openOrderingForm() {
+      this.isOrdering = true;
+    },
+    closeOrderingForm() {
+      this.isOrdering = false;
+    },
+    submitOrderingForm(userData) {
+      const orderId = Math.floor(Math.random() * 10000);
+      this.orderList.push({
+        id: orderId,
+        userData,
+        orderData: {
+          goods: this.cart.goods,
+          totalPrice: this.cart.totalPrice,
+        },
+      });
+      this.cart = {
+        totalPrice: 0,
+        totalCal: 0,
+        goods: [],
+      };
+      this.isOrdering = false;
+      this.madeOrder = true;
+    },
   },
   data() {
     // console.log(this.data);
     return {
-      isOrdering: false,
-      isEmptyCart: true,
       cart: this.data,
+      orderList: [],
+      isEmptyCart: true,
+      isOrdering: false,
+      madeOrder: false,
     };
   },
   mounted() {

@@ -1,7 +1,7 @@
 <template>
   <Header @openCart="openCart" />
 
-  <Modal v-if="isCartOpened">
+  <Modal v-if="isCartOpened" @closeModal="closeCart">
     <Cart @close="closeCart" :data="state.cart" />
   </Modal>
 
@@ -16,13 +16,6 @@ import Cart from "./components/Cart.vue";
 import Modal from "./UI/Modal.vue";
 import { API } from "./config.js";
 
-const initialCartData = {
-  goods: [],
-  totalPrice: 0,
-  totalCal: 0,
-  isOrdering: false,
-};
-
 export default {
   name: "App",
   components: {
@@ -36,7 +29,7 @@ export default {
       isCartOpened: false,
       state: {
         goods: null,
-        cart: { ...initialCartData, goods: [] },
+        cart: { totalPrice: 0, totalCal: 0, isOrdering: false, goods: [] },
         orderList: [],
       },
     };
