@@ -6,8 +6,14 @@
 
 <script>
 export default {
-  name: "button",
-  props: ["onClick"],
+  data() {
+    return {};
+  },
+  methods: {
+    onClick() {
+      this.$emit("onClick");
+    },
+  },
 };
 </script>
 

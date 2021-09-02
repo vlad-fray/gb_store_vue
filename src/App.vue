@@ -1,11 +1,11 @@
 <template>
   <Header @openCart="openCart" />
 
-  <Modal @close="closeCart" v-if="isCartOpened">
-    <Cart @closeCart="closeCart" :data="{ cart }" />
+  <Modal v-if="isCartOpened">
+    <Cart @close="closeCart" />
   </Modal>
 
-  <!-- <Catalog :goods="goods" /> -->
+  <Catalog />
 </template>
 
 <script>
@@ -15,13 +15,6 @@ import Catalog from "./layouts/Catalog.vue";
 import Cart from "./components/Cart.vue";
 import Modal from "./UI/Modal.vue";
 import * as store from "./store/store.js";
-import { API } from "./config.js";
-
-// const init = async () => {
-//   await store.loadCatalogItemsFromDatabase(`${API}/goodsList.json`);
-//   console.log(store.state);
-// };
-// init();
 
 export default {
   name: "App",
@@ -32,11 +25,9 @@ export default {
     Modal,
   },
   data() {
-    console.log(store.state.goods);
     return {
-      cart: { ...store.state.cart },
       isCartOpened: false,
-      goods: { ...store.state.goods },
+      cart: store.state.cart,
     };
   },
   methods: {

@@ -1,11 +1,20 @@
 <template>
-  <div class="catalog" v-if="!isEmpty">
-    <CatalogItem />
+  <div class="catalog" v-if="catalog">
+    <CatalogItem
+      v-for="good in catalog"
+      :key="good.id"
+      :good="good"
+      @addItem="addToCart"
+    />
   </div>
+  <div class="catalog" v-else>Catalog is empty...</div>
 </template>
 
 <script>
 import CatalogItem from "../components/CatalogItem.vue";
+import * as store from "../store/store.js";
+import { API } from "../config.js";
+
 export default {
   props: ["data"],
   components: {
@@ -13,9 +22,17 @@ export default {
   },
   data() {
     return {
-      goods: this.data.goods,
-      isEmpty: !this.data.goods.length,
+      catalog: null,
     };
+  },
+  methods: {
+    addToCart(id) {
+      store.addToCart(id);
+    },
+  },
+  async mounted() {
+    await store.loadCatalogItemsFromDatabase(`${API}/goodsList.json`);
+    this.catalog = { ...store.state.goods.burgers };
   },
 };
 </script>

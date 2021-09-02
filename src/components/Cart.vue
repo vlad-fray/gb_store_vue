@@ -1,11 +1,13 @@
 <template>
   <div class="cart">
     <div class="cart__content">
-      <h3 v-if="!isOrdering && isEmptyCart">Cart is empty</h3>
+      <h3 v-if="isEmptyCart">Cart is empty</h3>
     </div>
     <div class="cart__actions">
-      <Button class="button--cart-ordering">Order</Button>
-      <Button :onClick="closeCart" class="button--cancel-cart">Cancel</Button>
+      <button class="button button--cart-ordering">Order</button>
+      <button @click="closeCart" class="button button--cancel-cart">
+        Cancel
+      </button>
     </div>
   </div>
   <CartOrderForm />
@@ -23,15 +25,16 @@ export default {
   },
   methods: {
     closeCart() {
-      this.$emit("closeCart");
+      this.$emit("close");
     },
   },
   data() {
     return {
-      isOrdering: this.data.cart.isOrdering,
-      isEmptyCart: !this.data.cart.goods.length,
+      isOrdering: false,
+      isEmptyCart: true,
     };
   },
+  mounted() {},
 };
 </script>
 
