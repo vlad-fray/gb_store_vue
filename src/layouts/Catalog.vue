@@ -19,15 +19,17 @@ export default {
     CatalogItem,
   },
   data() {
-    // console.log(this.data.burgers);
     return {
-      catalog: this.data.burgers,
+      catalog: this.data,
     };
   },
   methods: {
     addToCart(id) {
       this.$emit("addToCart", id);
     },
+  },
+  updated() {
+    this.catalog = this.data;
   },
 };
 </script>

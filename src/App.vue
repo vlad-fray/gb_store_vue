@@ -1,11 +1,11 @@
 <template>
-  <Header @openCart="openCart" />
+  <Header @openCart="openCart" @onInputChange="changeFilteredGoods" />
 
   <Modal v-if="isCartOpened" @closeModal="closeCart">
     <Cart @close="closeCart" @submitOrder="submitOrder" :data="state.cart" />
   </Modal>
 
-  <Catalog v-if="state.goods" @addToCart="addToCart" :data="state.goods" />
+  <Catalog v-if="state.goods" @addToCart="addToCart" :data="filteredGoods" />
 </template>
 
 <script>
@@ -27,6 +27,8 @@ export default {
   data() {
     return {
       isCartOpened: false,
+      searchValue: "",
+      filteredGoods: null,
       state: {
         goods: null,
         cart: { totalPrice: 0, totalCal: 0, isOrdering: false, goods: [] },
@@ -36,7 +38,6 @@ export default {
   },
   async mounted() {
     await this.loadCatalogItemsFromDatabase(`${API}/goodsList.json`);
-    this.catalog = { ...this.state.goods.burgers };
   },
 
   methods: {
@@ -46,13 +47,23 @@ export default {
     closeCart() {
       this.isCartOpened = false;
     },
+
+    changeFilteredGoods(value) {
+      this.searchValue = value;
+      this.filteredGoods = this.state.goods.burgers.filter((good) => {
+        return good.title
+          .toLowerCase()
+          .includes(this.searchValue.toLowerCase());
+      });
+    },
+
     async loadCatalogItemsFromDatabase(url) {
       try {
         const res = await fetch(url);
         const data = await res.json();
 
         this.state.goods = data;
-        // console.log(state.goods);
+        this.changeFilteredGoods("");
       } catch (err) {
         console.error(err);
       }
