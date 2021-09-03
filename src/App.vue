@@ -6,6 +6,7 @@
   </Modal>
 
   <Catalog v-if="state.goods" @addToCart="addToCart" :data="filteredGoods" />
+  <NotFound v-if="serverError" />
 </template>
 
 <script>
@@ -14,6 +15,7 @@ import Header from "./layouts/Header.vue";
 import Catalog from "./layouts/Catalog.vue";
 import Cart from "./components/Cart.vue";
 import Modal from "./UI/Modal.vue";
+import NotFound from "./layouts/NotFound.vue";
 import { API } from "./config.js";
 
 export default {
@@ -23,9 +25,11 @@ export default {
     Cart,
     Catalog,
     Modal,
+    NotFound,
   },
   data() {
     return {
+      serverError: false,
       isCartOpened: false,
       searchValue: "",
       filteredGoods: null,
@@ -65,6 +69,7 @@ export default {
         this.state.goods = data;
         this.changeFilteredGoods("");
       } catch (err) {
+        this.serverError = true;
         console.error(err);
       }
     },
