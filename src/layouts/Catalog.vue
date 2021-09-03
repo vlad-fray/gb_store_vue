@@ -1,11 +1,14 @@
 <template>
-  <div class="catalog" v-if="catalog">
+  <div class="catalog" v-if="catalog && catalog.length">
     <CatalogItem
       v-for="good in catalog"
       :key="good.id"
       :good="good"
       @addItem="addToCart"
     />
+  </div>
+  <div class="catalog" v-else-if="!catalog.length">
+    <h3>No matching products...</h3>
   </div>
   <div class="catalog" v-else>Catalog is empty...</div>
 </template>
@@ -30,6 +33,7 @@ export default {
   },
   updated() {
     this.catalog = this.data;
+    console.log(this.catalog.length);
   },
 };
 </script>
