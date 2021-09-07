@@ -4,14 +4,14 @@
       {
         "cal": 20,
         "id": "b1",
-        "imgUrl": "tiny-burger.jpg",
+        "imgUrl": "https://primebeef.ru/images/cms/data/img_3911.jpg",
         "price": 1,
         "title": "Chicken burger"
       },
       {
         "cal": 40,
         "id": "b2",
-        "imgUrl": "big-burger.jpg",
+        "imgUrl": "https://jackburgers.com.ua/wp-content/uploads/2019/11/5c420211b492cb5cdb1d88d4-750-501.jpg",
         "price": 2,
         "title": "Beef burger"
       }
@@ -51,8 +51,74 @@
       ]
     }
   },
-  "user": {
-    "cartList": [],
-    "orderList": []
-  }
+  "cart": {
+    "totalPrice": 0,
+    "totalCal": 0,
+    "isOrdering": false,
+    "goods": []
+  },
+  "ordersList": [
+    {
+      "id": 1227,
+      "userData": {
+        "name": "max",
+        "number": "+7(900)888-4444",
+        "email": ""
+      },
+      "orderData": {
+        "goods": [
+          {
+            "id": "burger72",
+            "item": {
+              "cal": 20,
+              "id": "b1",
+              "imgUrl": "tiny-burger.jpg",
+              "price": 1,
+              "title": "Chicken burger"
+            },
+            "supplements": [
+              {
+                "cal": 20,
+                "id": "s1",
+                "price": 0.2,
+                "title": "Cheese",
+                "isAdded": false
+              },
+              {
+                "cal": 5,
+                "id": "s2",
+                "price": 0.4,
+                "title": "Salad",
+                "isAdded": true
+              },
+              {
+                "cal": 10,
+                "id": "s3",
+                "price": 0.3,
+                "title": "Potato",
+                "isAdded": false
+              },
+              {
+                "cal": 0,
+                "id": "s4",
+                "price": 0.3,
+                "title": "Seasoning",
+                "isAdded": true
+              },
+              {
+                "cal": 5,
+                "id": "s5",
+                "price": 0.4,
+                "title": "Mayonnaise",
+                "isAdded": false
+              }
+            ],
+            "itemPrice": 1.7000000000000002,
+            "itemCal": 25
+          }
+        ],
+        "totalPrice": 1.7000000000000002
+      }
+    }
+  ]
 }

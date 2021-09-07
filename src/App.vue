@@ -41,7 +41,8 @@ export default {
     };
   },
   async mounted() {
-    await this.loadCatalogItemsFromDatabase(API);
+    await this.loadCatalogItemsFromDatabase(API + "goodsList/");
+    await this.loadCartItemsFromDatabase(API + "cart/");
   },
 
   methods: {
@@ -63,7 +64,6 @@ export default {
 
     async loadCatalogItemsFromDatabase(url) {
       try {
-        console.log(url);
         const res = await fetch(url);
         const data = await res.json();
 
@@ -75,7 +75,21 @@ export default {
       }
     },
 
-    addToCart(id) {
+    async loadCartItemsFromDatabase(url) {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.goods.length) return;
+        this.state.cart = data;
+        this.changeFilteredGoods("");
+      } catch (err) {
+        this.serverError = true;
+        console.error(err);
+      }
+    },
+
+    async addToCart(id) {
       const currentGood = this.state.goods.burgers.find(
         (burger) => burger.id === id
       );
@@ -103,18 +117,29 @@ export default {
         totalCal: this.state.cart.totalCal + currentGood.cal,
         goods: [...this.state.cart.goods, newCartItem],
       };
+
+      await fetch(API + "cart/", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.state.cart),
+      });
     },
 
-    submitOrder(userData) {
-      const orderId = Math.floor(Math.random() * 10000);
-      this.state.orderList.push({
-        id: orderId,
+    async submitOrder(userData) {
+      const newOrdersListItem = {
         userData,
         orderData: {
           goods: this.state.cart.goods,
           totalPrice: this.state.cart.totalPrice,
         },
+      };
+
+      await fetch(API + "ordersList/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newOrdersListItem),
       });
+
       this.state.cart = {
         totalPrice: 0,
         totalCal: 0,

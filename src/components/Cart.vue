@@ -52,6 +52,7 @@
 import CartOrderForm from "./CartOrderForm.vue";
 import CartItem from "./CartItem.vue";
 import Button from "../UI/Button.vue";
+import { API } from "../config.js";
 
 export default {
   props: ["data"],
@@ -87,12 +88,18 @@ export default {
 
       currentSup.isAdded = !currentSup.isAdded;
     },
-    removeItemFromCart(itemId) {
+    async removeItemFromCart(itemId) {
       const itemToDelete = this.cart.goods.find((good) => good.id === itemId);
       this.cart.totalPrice -= itemToDelete.itemPrice;
       this.cart.totalCal -= itemToDelete.itemCal;
 
       this.cart.goods = this.cart.goods.filter((good) => good.id !== itemId);
+
+      await fetch(API + "cart/", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(this.cart),
+      });
     },
     openOrderingForm() {
       this.isOrdering = true;
