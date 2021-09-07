@@ -41,7 +41,7 @@ export default {
     };
   },
   async mounted() {
-    await this.loadCatalogItemsFromDatabase(`${API}/goodsList.json`);
+    await this.loadCatalogItemsFromDatabase(API);
   },
 
   methods: {
@@ -63,6 +63,7 @@ export default {
 
     async loadCatalogItemsFromDatabase(url) {
       try {
+        console.log(url);
         const res = await fetch(url);
         const data = await res.json();
 

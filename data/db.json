@@ -1,0 +1,58 @@
+{
+  "goodsList": {
+    "burgers": [
+      {
+        "cal": 20,
+        "id": "b1",
+        "imgUrl": "tiny-burger.jpg",
+        "price": 1,
+        "title": "Chicken burger"
+      },
+      {
+        "cal": 40,
+        "id": "b2",
+        "imgUrl": "big-burger.jpg",
+        "price": 2,
+        "title": "Beef burger"
+      }
+    ],
+    "supplements": {
+      "toBurgers": [
+        {
+          "cal": 20,
+          "id": "s1",
+          "price": 0.2,
+          "title": "Cheese"
+        },
+        {
+          "cal": 5,
+          "id": "s2",
+          "price": 0.4,
+          "title": "Salad"
+        },
+        {
+          "cal": 10,
+          "id": "s3",
+          "price": 0.3,
+          "title": "Potato"
+        },
+        {
+          "cal": 0,
+          "id": "s4",
+          "price": 0.3,
+          "title": "Seasoning"
+        },
+        {
+          "cal": 5,
+          "id": "s5",
+          "price": 0.4,
+          "title": "Mayonnaise"
+        }
+      ]
+    }
+  },
+  "user": {
+    "cartList": [],
+    "orderList": []
+  }
+}
