@@ -1,4 +1,4 @@
-# gb_store_vue
+# gb_store_vue-vuex
 
 ## Project setup
 ```

@@ -7,33 +7,27 @@
       @addItem="addToCart"
     />
   </div>
-  <div class="catalog" v-else-if="!catalog.length">
+  <div class="catalog" v-else-if="catalog && !catalog.length">
     <h3>No matching products...</h3>
   </div>
   <div class="catalog" v-else>Catalog is empty...</div>
 </template>
 
 <script>
-import CatalogItem from "../components/CatalogItem.vue";
+import CatalogItem from "@/components/CatalogItem.vue";
+import { computed, ref } from "@vue/reactivity";
 
 export default {
-  props: ["data"],
+  props: ["catalog"],
   components: {
     CatalogItem,
   },
-  data() {
-    return {
-      catalog: this.data,
+  setup(props, context) {
+    const addToCart = (id) => {
+      context.emit("addToCart", id);
     };
-  },
-  methods: {
-    addToCart(id) {
-      this.$emit("addToCart", id);
-    },
-  },
-  updated() {
-    this.catalog = this.data;
-    console.log(this.catalog.length);
+
+    return { addToCart };
   },
 };
 </script>
