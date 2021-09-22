@@ -1,188 +1,100 @@
 <template>
-  <Header @onInputChange="changeFilteredGoods" @openCart="openCart" />
-
-  <Modal v-if="isCartOpened" @closeModal="closeCart">
-    <Cart @close="closeCart" @submitOrder="submitOrder" :data="cart" />
-  </Modal>
-
-  <Catalog v-if="goods" @addToCart="addToCart" :catalog="filteredGoods" />
-  <NotFound v-if="serverError" />
+  <div class="filtering">
+    <h3>Write a name of burger:</h3>
+    <input
+      v-model="searchValue"
+      @keyup="onInputChange"
+      type="text"
+      class="input"
+      placeholder="&#x1F50E;"
+      maxlength="50"
+    />
+  </div>
+  <div class="catalog" v-if="filteredBurgers && filteredBurgers.length">
+    <CatalogItem
+      v-for="good in filteredBurgers"
+      :key="good.id"
+      :good="good"
+      @addItem="addToCart"
+    />
+  </div>
+  <div class="catalog" v-else-if="filteredBurgers && !filteredBurgers.length">
+    <h3>No matching products...</h3>
+  </div>
+  <div class="catalog" v-else>Catalog is empty...</div>
 </template>
 
 <script>
 import "@/assets/base-styles.css";
-import Header from "@/layouts/Header.vue";
-import Catalog from "@/layouts/Catalog.vue";
-import Cart from "@/components/Cart.vue";
-import Modal from "@/UI/Modal.vue";
-import NotFound from "@/layouts/NotFound.vue";
+import CatalogItem from "@/components/CatalogItem.vue";
 import { API } from "@/config.js";
 import { computed, ref } from "@vue/reactivity";
-import { onMounted } from "@vue/runtime-core";
+import { onMounted, onUpdated } from "@vue/runtime-core";
+import { useStore } from "vuex";
 
 export default {
-  name: "Home",
-  components: { Header, Catalog, Cart, Modal, NotFound },
+  components: { CatalogItem },
   setup() {
+    const store = useStore();
+    const goods = computed(() => store.state.goods);
+    const burgers = computed(() => goods.value?.burgers);
+
     const serverError = ref(false);
-    const isCartOpened = ref(false);
     const searchValue = ref("");
-    const goods = ref(null);
-    const cart = ref({
-      totalPrice: 0,
-      totalCal: 0,
-      isOrdering: false,
-      goods: [],
-    });
 
-    const filteredGoods = computed(() => {
+    const filteredBurgers = computed(() => {
       if (!goods.value?.burgers) return null;
-      return goods.value.burgers.filter((good) => {
-        return good.title
-          .toLowerCase()
-          .includes(searchValue.value.toLowerCase());
-      });
+      return goods.value.burgers.filter((burger) =>
+        burger.title.toLowerCase().includes(searchValue.value.toLowerCase())
+      );
     });
-
-    const openCart = () => {
-      isCartOpened.value = true;
-    };
-
-    const closeCart = () => {
-      isCartOpened.value = false;
-    };
-
-    const changeFilteredGoods = (value) => {
-      searchValue.value = value.toLowerCase();
-    };
-
-    const loadCatalogItemsFromDatabase = async (url) => {
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        goods.value = data;
-        // changeFilteredGoods("");
-      } catch (err) {
-        serverError.value = true;
-        console.error(err);
-      }
-    };
-
-    const loadCartItemsFromDatabase = async (url) => {
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (!data.goods.length) return;
-        cart.value = data;
-        // changeFilteredGoods("");
-      } catch (err) {
-        serverError.value = true;
-        console.error(err);
-      }
-    };
 
     const addToCart = async (id) => {
-      const currentGood = goods.value.burgers.find(
-        (burger) => burger.id === id
-      );
-
-      const supplements = goods.value.supplements.toBurgers.map((sup) => {
-        return {
-          ...sup,
-          isAdded: false,
-        };
-      });
-
-      const ranNum = Math.floor(Math.random() * 500);
-
-      const newCartItem = {
-        id: `burger${ranNum}`,
-        item: currentGood,
-        supplements: [...supplements],
-        itemPrice: currentGood.price,
-        itemCal: currentGood.cal,
-      };
-
-      cart.value = {
-        ...cart.value,
-        totalPrice: cart.value.totalPrice + currentGood.price,
-        totalCal: cart.value.totalCal + currentGood.cal,
-        goods: [...cart.value.goods, newCartItem],
-      };
-
-      await fetch(API + "cart/", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cart.value),
-      });
+      store.commit("addToCart", { id });
     };
 
     const submitOrder = async (userData) => {
-      const goods = cart.value.goods.map((good) => {
-        const supplements = good.supplements.filter((sup) => sup.isAdded);
-        console.log(good);
-        return {
-          id: good.id,
-          item: good.item,
-          supplements: [...supplements],
-          price: good.itemPrice,
-        };
-      });
-      const newOrdersListItem = {
-        userData,
-        orderData: {
-          goods,
-          totalPrice: cart.value.totalPrice,
-        },
-      };
-
-      await fetch(API + "ordersList/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOrdersListItem),
-      });
-
-      await fetch(API + "cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          totalPrice: 0,
-          totalCal: 0,
-          isOrdering: false,
-          goods: [],
-        }),
-      });
-
-      cart.value = {
-        totalPrice: 0,
-        totalCal: 0,
-        isOrdering: false,
-        goods: [],
-      };
+      store.commit("submitOrger", { userData });
     };
 
     onMounted(async () => {
-      loadCatalogItemsFromDatabase(API + "goodsList/");
-      loadCartItemsFromDatabase(API + "cart/");
+      store.commit("loadCatalog");
     });
 
     return {
-      cart,
-      goods,
+      burgers,
       serverError,
-      isCartOpened,
       searchValue,
-      filteredGoods,
-      openCart,
-      closeCart,
-      changeFilteredGoods,
-      loadCatalogItemsFromDatabase,
-      loadCartItemsFromDatabase,
+      filteredBurgers,
       addToCart,
       submitOrder,
     };
   },
 };
 </script>
+
+<style scoped>
+.catalog {
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 auto;
+  gap: 1rem;
+}
+.filtering {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+}
+.input {
+  height: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-main-bg);
+  max-width: 15rem;
+  width: 100%;
+  padding: 0 1rem;
+  margin-left: 2rem;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.26);
+}
+</style>

@@ -2,38 +2,29 @@
   <header class="header">
     <div class="container header-container">
       <h1 class="header__heading">&#127828; Burger shop</h1>
-      <input
-        v-model="searchValue"
-        @keyup="onInputChange"
-        type="text"
-        class="input"
-        placeholder="&#x1F50E;"
-        maxlength="50"
-      />
       <Button @onClick="openCart" class="button--open-cart">&#128722;</Button>
     </div>
   </header>
 </template>
 
 <script>
+import { computed } from "@vue/reactivity";
+import { useStore } from "vuex";
 import Button from "../UI/Button.vue";
 export default {
-  emits: ["openCart", "onInputChange"],
+  emits: ["openCart"],
   components: {
     Button,
   },
-  methods: {
-    openCart() {
-      this.$emit("openCart");
-    },
-    onInputChange() {
-      this.$emit("onInputChange", this.searchValue);
-    },
-  },
-  data() {
-    return {
-      searchValue: "",
+  setup(props, context) {
+    const store = useStore();
+    const searchValue = computed(() => store.state.searchValue);
+
+    const openCart = () => {
+      context.emit("openCart");
     };
+
+    return { searchValue, openCart };
   },
 };
 </script>
@@ -52,17 +43,7 @@ export default {
 }
 
 .button--open-cart {
-  /* margin-left: auto; */
+  margin-left: auto;
   padding: 1rem;
-}
-.input {
-  height: 1.5rem;
-  border-radius: 10px;
-  border: 1px solid var(--color-main-bg);
-  max-width: 15rem;
-  width: 100%;
-  padding: 0 1rem;
-  margin: 0 2rem 0 auto;
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.26);
 }
 </style>
