@@ -120,10 +120,20 @@ export default {
     };
 
     const submitOrder = async (userData) => {
+      const goods = cart.value.goods.map((good) => {
+        const supplements = good.supplements.filter((sup) => sup.isAdded);
+        console.log(good);
+        return {
+          id: good.id,
+          item: good.item,
+          supplements: [...supplements],
+          price: good.itemPrice,
+        };
+      });
       const newOrdersListItem = {
         userData,
         orderData: {
-          goods: cart.value.goods,
+          goods,
           totalPrice: cart.value.totalPrice,
         },
       };
@@ -132,6 +142,17 @@ export default {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newOrdersListItem),
+      });
+
+      await fetch(API + "cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          totalPrice: 0,
+          totalCal: 0,
+          isOrdering: false,
+          goods: [],
+        }),
       });
 
       cart.value = {
