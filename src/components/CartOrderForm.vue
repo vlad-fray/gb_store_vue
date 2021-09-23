@@ -9,7 +9,7 @@
       </p>
     </label>
 
-    <label class="order-input">
+    <label title="Only Russian numbers" class="order-input">
       Number* :
       <input
         v-model="number"

@@ -1,7 +1,9 @@
 <template>
   <header class="header">
     <div class="container header-container">
-      <h1 class="header__heading">&#127828; Burger shop</h1>
+      <router-link :to="{ name: 'Catalog' }">
+        <h1 class="header__heading">&#127828; Burger shop</h1>
+      </router-link>
       <div class="links">
         <router-link :to="{ name: 'Catalog' }">Catalog</router-link>
         <router-link :to="{ name: 'MyOrders' }">MyOrders</router-link>
@@ -55,6 +57,7 @@ export default {
   flex-wrap: wrap;
   margin: 0 auto;
   border-radius: 5px;
+  gap: 10px;
 }
 
 .links a {
@@ -64,12 +67,17 @@ export default {
 }
 
 .links a.router-link-active {
-  background-color: var(--color-secondary-bg);
-  color: var(--color-main-text);
+  background-color: var(--color-main-text);
+
   cursor: default;
 }
 
 .links a:not(.router-link-active) {
-  background-color: var(--color-main-text);
+  color: var(--color-main-text);
+
+  background-color: var(--color-secondary-bg);
+}
+.links a:hover {
+  box-shadow: inset 0 0 0 1px var(--color-main-text);
 }
 </style>

@@ -1,14 +1,19 @@
 <template>
   <div class="orders">
-    <h1>My orders</h1>
     <div v-if="orders">
-      <Order v-for="order in orders" :key="order.id" :order="order" />
+      <Order
+        v-for="order in orders"
+        :key="order.id"
+        :order="order"
+        @removeOrder="removeOrder"
+      />
     </div>
+    <div v-else>You did not do any orders</div>
   </div>
 </template>
 
 <script>
-import { computed, ref } from "@vue/reactivity";
+import { computed } from "@vue/reactivity";
 import { useStore } from "vuex";
 import { onMounted } from "@vue/runtime-core";
 import Order from "@/components/Order.vue";
@@ -38,17 +43,22 @@ export default {
       });
     });
 
+    const removeOrder = (id) => {
+      console.log(id);
+      store.commit("removeOrder", { id });
+    };
+
     onMounted(() => {
       store.commit("loadOrders");
     });
-    return { orders };
+    return { orders, removeOrder };
   },
 };
 </script>
 
 <style>
 .orders {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 10px 20px;
 }

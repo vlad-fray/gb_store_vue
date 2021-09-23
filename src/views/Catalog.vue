@@ -1,7 +1,8 @@
 <template>
   <div class="filtering">
-    <h3>Write a name of burger:</h3>
+    <label for="filter">Write a name of a burger:</label>
     <input
+      id="filter"
       v-model="searchValue"
       @keyup="onInputChange"
       type="text"
@@ -82,13 +83,19 @@ export default {
   margin: 0 auto;
   gap: 1rem;
 }
+
 .filtering {
   margin: 20px;
   display: flex;
   justify-content: center;
 }
+.filtering label {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: white;
+}
 .input {
-  height: 1.5rem;
+  height: 2rem;
   border-radius: 10px;
   border: 1px solid var(--color-main-bg);
   max-width: 15rem;

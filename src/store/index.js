@@ -116,7 +116,6 @@ const mutations = {
 
     const currentItem = cart.goods.find((burger) => burger.id === burgerId);
     const currentSup = currentItem.supplements.find((sup) => sup.id === supId);
-    console.log(currentItem);
 
     if (currentSup.isAdded) {
       cart.totalPrice -= currentSup.price;
@@ -186,6 +185,16 @@ const mutations = {
       isOrdering: false,
       goods: [],
     };
+  },
+  async removeOrder(state, { id }) {
+    state.orders = state.orders.filter((order) => order.id !== id);
+    const orders = state.orders;
+
+    console.log(API);
+    await fetch(API + 'ordersList/' + id, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
   },
 };
 

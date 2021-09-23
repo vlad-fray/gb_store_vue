@@ -11,7 +11,7 @@
       {
         "cal": 40,
         "id": "b2",
-        "imgUrl": "https://jackburgers.com.ua/wp-content/uploads/2019/11/5c420211b492cb5cdb1d88d4-750-501.jpg",
+        "imgUrl": "https://e1.edimdoma.ru/data/recipes/0009/9818/99818-ed4_wide.jpg?1628786175",
         "price": 2,
         "title": "Beef burger"
       }
@@ -62,11 +62,11 @@
       "orderData": {
         "goods": [
           {
-            "id": "burger48",
+            "id": "burger248",
             "item": {
               "cal": 40,
               "id": "b2",
-              "imgUrl": "https://jackburgers.com.ua/wp-content/uploads/2019/11/5c420211b492cb5cdb1d88d4-750-501.jpg",
+              "imgUrl": "https://e1.edimdoma.ru/data/recipes/0009/9818/99818-ed4_wide.jpg?1628786175",
               "price": 2,
               "title": "Beef burger"
             },
@@ -76,6 +76,13 @@
                 "id": "s1",
                 "price": 0.2,
                 "title": "Cheese",
+                "isAdded": true
+              },
+              {
+                "cal": 5,
+                "id": "s2",
+                "price": 0.4,
+                "title": "Salad",
                 "isAdded": true
               },
               {
@@ -86,6 +93,13 @@
                 "isAdded": true
               },
               {
+                "cal": 0,
+                "id": "s4",
+                "price": 0.3,
+                "title": "Seasoning",
+                "isAdded": true
+              },
+              {
                 "cal": 5,
                 "id": "s5",
                 "price": 0.4,
@@ -93,80 +107,10 @@
                 "isAdded": true
               }
             ],
-            "price": 2.9
-          }
-        ],
-        "totalPrice": 2.9
-      },
-      "id": 1
-    },
-    {
-      "orderData": {
-        "goods": [
-          {
-            "id": "burger242",
-            "item": {
-              "cal": 20,
-              "id": "b1",
-              "imgUrl": "https://primebeef.ru/images/cms/data/img_3911.jpg",
-              "price": 1,
-              "title": "Chicken burger"
-            },
-            "supplements": [
-              {
-                "cal": 20,
-                "id": "s1",
-                "price": 0.2,
-                "title": "Cheese",
-                "isAdded": true
-              },
-              {
-                "cal": 0,
-                "id": "s4",
-                "price": 0.3,
-                "title": "Seasoning",
-                "isAdded": true
-              }
-            ],
-            "price": 1.5
-          }
-        ],
-        "totalPrice": 1.5
-      },
-      "id": 2
-    },
-    {
-      "orderData": {
-        "goods": [
-          {
-            "id": "burger84",
-            "item": {
-              "cal": 40,
-              "id": "b2",
-              "imgUrl": "https://jackburgers.com.ua/wp-content/uploads/2019/11/5c420211b492cb5cdb1d88d4-750-501.jpg",
-              "price": 2,
-              "title": "Beef burger"
-            },
-            "supplements": [
-              {
-                "cal": 5,
-                "id": "s2",
-                "price": 0.4,
-                "title": "Salad",
-                "isAdded": true
-              },
-              {
-                "cal": 0,
-                "id": "s4",
-                "price": 0.3,
-                "title": "Seasoning",
-                "isAdded": true
-              }
-            ],
-            "price": 2.6999999999999997
+            "price": 3.5999999999999996
           },
           {
-            "id": "burger102",
+            "id": "burger270",
             "item": {
               "cal": 20,
               "id": "b1",
@@ -174,19 +118,11 @@
               "price": 1,
               "title": "Chicken burger"
             },
-            "supplements": [
-              {
-                "cal": 5,
-                "id": "s2",
-                "price": 0.4,
-                "title": "Salad",
-                "isAdded": true
-              }
-            ],
-            "price": 1.4
+            "supplements": [],
+            "price": 1
           }
         ],
-        "totalPrice": 4.1
+        "totalPrice": 4.6
       },
       "id": 3
     }
