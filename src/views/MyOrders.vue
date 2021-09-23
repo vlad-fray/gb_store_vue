@@ -16,22 +16,25 @@ export default {
   components: { Order },
   setup() {
     const store = useStore();
-    const myOrders = computed(() =>
-      store.state.orders.map((order) => order.orderData.goods)
-    );
+
+    const ordersList = computed(() => {
+      return store.state.orders.map((order) => {
+        const { id } = order;
+        const { goods, totalPrice } = order.orderData;
+        return { id, goods, totalPrice };
+      });
+    });
 
     const orders = computed(() => {
-      return myOrders.value.map((burgersList) => {
-        const burgers = burgersList.map((burger) => {
+      return ordersList.value.map((order) => {
+        const { id, totalPrice } = order;
+        const burgers = order.goods.map((burger) => {
           const { id } = burger;
-          const { imgUrl, title, price } = burger.item;
-          const sups = burger.supplements.map((sup) => ({
-            title: sup.title,
-            price: sup.price,
-          }));
-          return { id, info: { title, price, imgUrl, sups } };
+          const { imgUrl, title } = burger.item;
+          const sups = burger.supplements.map((sup) => sup.title);
+          return { id, info: { title, imgUrl, sups } };
         });
-        return burgers;
+        return { id, totalPrice, burgers };
       });
     });
 
