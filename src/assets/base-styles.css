@@ -3,11 +3,6 @@
   --color-secondary-bg: #85dcbb;
   --color-main-text: #1d4e48;
   --color-accent: #e27d60;
-
-  --bp-large: 1200px;
-  --bp-medium: 900px;
-  --bp-small: 700px;
-  --bp-smallest: 400px;
 }
 
 *,
@@ -43,6 +38,7 @@ a,
 a:visited,
 a:hover {
   text-decoration: none;
+  color: var(--color-main-text);
 }
 
 ul li {
@@ -58,31 +54,3 @@ body {
   max-width: 1920px;
   margin: 0 auto;
 }
-
-/* .main {
-  &__heading {
-    padding-top: 1rem;
-    margin-left: 1rem;
-  }
-} */
-
-/* .hidden {
-  display: none;
-}
-
-.button {
-  color: var(--color-main-text);
-  border-radius: 5px;
-  border: none;
-  box-shadow: 0 2px 5px 0 var(--color-main-bg);
-  background-color: white;
-}
-
-.button:hover {
-  box-shadow: none;
-}
-
-.button:active {
-  color: white;
-  background-color: var(--color-main-bg);
-} */

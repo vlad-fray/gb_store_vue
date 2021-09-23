@@ -52,60 +52,10 @@
     }
   },
   "cart": {
-    "totalPrice": 2,
-    "totalCal": 40,
+    "totalPrice": 0,
+    "totalCal": 0,
     "isOrdering": false,
-    "goods": [
-      {
-        "id": "burger624",
-        "item": {
-          "cal": 40,
-          "id": "b2",
-          "imgUrl": "https://jackburgers.com.ua/wp-content/uploads/2019/11/5c420211b492cb5cdb1d88d4-750-501.jpg",
-          "price": 2,
-          "title": "Beef burger"
-        },
-        "supplements": [
-          {
-            "cal": 20,
-            "id": "s1",
-            "price": 0.2,
-            "title": "Cheese",
-            "isAdded": false
-          },
-          {
-            "cal": 5,
-            "id": "s2",
-            "price": 0.4,
-            "title": "Salad",
-            "isAdded": false
-          },
-          {
-            "cal": 10,
-            "id": "s3",
-            "price": 0.3,
-            "title": "Potato",
-            "isAdded": false
-          },
-          {
-            "cal": 0,
-            "id": "s4",
-            "price": 0.3,
-            "title": "Seasoning",
-            "isAdded": false
-          },
-          {
-            "cal": 5,
-            "id": "s5",
-            "price": 0.4,
-            "title": "Mayonnaise",
-            "isAdded": false
-          }
-        ],
-        "itemPrice": 2,
-        "itemCal": 40
-      }
-    ]
+    "goods": []
   },
   "ordersList": [
     {
@@ -149,6 +99,96 @@
         "totalPrice": 2.9
       },
       "id": 1
+    },
+    {
+      "orderData": {
+        "goods": [
+          {
+            "id": "burger242",
+            "item": {
+              "cal": 20,
+              "id": "b1",
+              "imgUrl": "https://primebeef.ru/images/cms/data/img_3911.jpg",
+              "price": 1,
+              "title": "Chicken burger"
+            },
+            "supplements": [
+              {
+                "cal": 20,
+                "id": "s1",
+                "price": 0.2,
+                "title": "Cheese",
+                "isAdded": true
+              },
+              {
+                "cal": 0,
+                "id": "s4",
+                "price": 0.3,
+                "title": "Seasoning",
+                "isAdded": true
+              }
+            ],
+            "price": 1.5
+          }
+        ],
+        "totalPrice": 1.5
+      },
+      "id": 2
+    },
+    {
+      "orderData": {
+        "goods": [
+          {
+            "id": "burger84",
+            "item": {
+              "cal": 40,
+              "id": "b2",
+              "imgUrl": "https://jackburgers.com.ua/wp-content/uploads/2019/11/5c420211b492cb5cdb1d88d4-750-501.jpg",
+              "price": 2,
+              "title": "Beef burger"
+            },
+            "supplements": [
+              {
+                "cal": 5,
+                "id": "s2",
+                "price": 0.4,
+                "title": "Salad",
+                "isAdded": true
+              },
+              {
+                "cal": 0,
+                "id": "s4",
+                "price": 0.3,
+                "title": "Seasoning",
+                "isAdded": true
+              }
+            ],
+            "price": 2.6999999999999997
+          },
+          {
+            "id": "burger102",
+            "item": {
+              "cal": 20,
+              "id": "b1",
+              "imgUrl": "https://primebeef.ru/images/cms/data/img_3911.jpg",
+              "price": 1,
+              "title": "Chicken burger"
+            },
+            "supplements": [
+              {
+                "cal": 5,
+                "id": "s2",
+                "price": 0.4,
+                "title": "Salad",
+                "isAdded": true
+              }
+            ],
+            "price": 1.4
+          }
+        ],
+        "totalPrice": 4.1
+      },
+      "id": 3
     }
   ]
 }

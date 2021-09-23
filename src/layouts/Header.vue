@@ -2,6 +2,10 @@
   <header class="header">
     <div class="container header-container">
       <h1 class="header__heading">&#127828; Burger shop</h1>
+      <div class="links">
+        <router-link :to="{ name: 'Catalog' }">Catalog</router-link>
+        <router-link :to="{ name: 'MyOrders' }">MyOrders</router-link>
+      </div>
       <Button @onClick="openCart" class="button--open-cart">&#128722;</Button>
     </div>
   </header>
@@ -45,5 +49,27 @@ export default {
 .button--open-cart {
   margin-left: auto;
   padding: 1rem;
+}
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+
+.links a {
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.links a.router-link-active {
+  background-color: var(--color-secondary-bg);
+  color: var(--color-main-text);
+  cursor: default;
+}
+
+.links a:not(.router-link-active) {
+  background-color: var(--color-main-text);
 }
 </style>

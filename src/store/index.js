@@ -18,6 +18,7 @@ const state = {
     goods: [],
   },
   showCart: false,
+  orders: [],
 };
 
 const mutations = {
@@ -45,6 +46,18 @@ const mutations = {
 
       if (!data.goods.length) return;
       state.cart = data;
+    } catch (err) {
+      state.loadError = err.message;
+      console.error(err);
+    }
+  },
+  async loadOrders(state) {
+    try {
+      const res = await fetch(API + 'ordersList/');
+      const data = await res.json();
+
+      // console.log(data);
+      state.orders = data;
     } catch (err) {
       state.loadError = err.message;
       console.error(err);

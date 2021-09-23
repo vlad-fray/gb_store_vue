@@ -50,7 +50,6 @@ export default {
   components: { Button },
   setup(props, context) {
     const good = props.good;
-    console.log(good);
 
     const removeItem = () => {
       context.emit("removeItem", good.id);
