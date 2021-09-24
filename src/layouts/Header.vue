@@ -41,6 +41,7 @@ export default {
 <style scoped>
 .header {
   background-color: var(--color-secondary-bg);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.26);
 }
 .header-container {
   min-height: 5rem;
@@ -62,5 +63,6 @@ export default {
   width: 100%;
   padding: 0 1rem;
   margin: 0 2rem 0 auto;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.26);
 }
 </style>
