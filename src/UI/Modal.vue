@@ -9,9 +9,10 @@
 
 <script>
 export default {
+  emits: ["closeModal"],
   methods: {
     closeModal() {
-      this.$emit("close");
+      this.$emit("closeModal");
     },
   },
 };

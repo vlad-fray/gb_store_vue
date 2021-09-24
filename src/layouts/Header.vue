@@ -2,6 +2,14 @@
   <header class="header">
     <div class="container header-container">
       <h1 class="header__heading">&#127828; Burger shop</h1>
+      <input
+        v-model="searchValue"
+        @keyup="onInputChange"
+        type="text"
+        class="input"
+        placeholder="&#x1F50E;"
+        maxlength="50"
+      />
       <Button @onClick="openCart" class="button--open-cart">&#128722;</Button>
     </div>
   </header>
@@ -10,6 +18,7 @@
 <script>
 import Button from "../UI/Button.vue";
 export default {
+  emits: ["openCart", "onInputChange"],
   components: {
     Button,
   },
@@ -17,9 +26,14 @@ export default {
     openCart() {
       this.$emit("openCart");
     },
+    onInputChange() {
+      this.$emit("onInputChange", this.searchValue);
+    },
   },
   data() {
-    return {};
+    return {
+      searchValue: "",
+    };
   },
 };
 </script>
@@ -29,7 +43,7 @@ export default {
   background-color: var(--color-secondary-bg);
 }
 .header-container {
-  height: 5rem;
+  min-height: 5rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -37,7 +51,16 @@ export default {
 }
 
 .button--open-cart {
-  margin-left: auto;
+  /* margin-left: auto; */
   padding: 1rem;
+}
+.input {
+  height: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-main-bg);
+  max-width: 15rem;
+  width: 100%;
+  padding: 0 1rem;
+  margin: 0 2rem 0 auto;
 }
 </style>

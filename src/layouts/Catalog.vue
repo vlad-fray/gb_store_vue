@@ -1,5 +1,5 @@
 <template>
-  <div class="catalog" v-if="catalog">
+  <div class="catalog" v-if="catalog && catalog.length">
     <CatalogItem
       v-for="good in catalog"
       :key="good.id"
@@ -7,13 +7,14 @@
       @addItem="addToCart"
     />
   </div>
+  <div class="catalog" v-else-if="!catalog.length">
+    <h3>No matching products...</h3>
+  </div>
   <div class="catalog" v-else>Catalog is empty...</div>
 </template>
 
 <script>
 import CatalogItem from "../components/CatalogItem.vue";
-import * as store from "../store/store.js";
-import { API } from "../config.js";
 
 export default {
   props: ["data"],
@@ -22,17 +23,17 @@ export default {
   },
   data() {
     return {
-      catalog: null,
+      catalog: this.data,
     };
   },
   methods: {
     addToCart(id) {
-      store.addToCart(id);
+      this.$emit("addToCart", id);
     },
   },
-  async mounted() {
-    await store.loadCatalogItemsFromDatabase(`${API}/goodsList.json`);
-    this.catalog = { ...store.state.goods.burgers };
+  updated() {
+    this.catalog = this.data;
+    console.log(this.catalog.length);
   },
 };
 </script>
