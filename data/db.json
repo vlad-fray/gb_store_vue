@@ -11,7 +11,7 @@
       {
         "cal": 40,
         "id": "b2",
-        "imgUrl": "https://jackburgers.com.ua/wp-content/uploads/2019/11/5c420211b492cb5cdb1d88d4-750-501.jpg",
+        "imgUrl": "https://e1.edimdoma.ru/data/recipes/0009/9818/99818-ed4_wide.jpg?1628786175",
         "price": 2,
         "title": "Beef burger"
       }
@@ -59,22 +59,16 @@
   },
   "ordersList": [
     {
-      "id": 1227,
-      "userData": {
-        "name": "max",
-        "number": "+7(900)888-4444",
-        "email": ""
-      },
       "orderData": {
         "goods": [
           {
-            "id": "burger72",
+            "id": "burger248",
             "item": {
-              "cal": 20,
-              "id": "b1",
-              "imgUrl": "tiny-burger.jpg",
-              "price": 1,
-              "title": "Chicken burger"
+              "cal": 40,
+              "id": "b2",
+              "imgUrl": "https://e1.edimdoma.ru/data/recipes/0009/9818/99818-ed4_wide.jpg?1628786175",
+              "price": 2,
+              "title": "Beef burger"
             },
             "supplements": [
               {
@@ -82,7 +76,7 @@
                 "id": "s1",
                 "price": 0.2,
                 "title": "Cheese",
-                "isAdded": false
+                "isAdded": true
               },
               {
                 "cal": 5,
@@ -96,7 +90,7 @@
                 "id": "s3",
                 "price": 0.3,
                 "title": "Potato",
-                "isAdded": false
+                "isAdded": true
               },
               {
                 "cal": 0,
@@ -110,15 +104,27 @@
                 "id": "s5",
                 "price": 0.4,
                 "title": "Mayonnaise",
-                "isAdded": false
+                "isAdded": true
               }
             ],
-            "itemPrice": 1.7000000000000002,
-            "itemCal": 25
+            "price": 3.5999999999999996
+          },
+          {
+            "id": "burger270",
+            "item": {
+              "cal": 20,
+              "id": "b1",
+              "imgUrl": "https://primebeef.ru/images/cms/data/img_3911.jpg",
+              "price": 1,
+              "title": "Chicken burger"
+            },
+            "supplements": [],
+            "price": 1
           }
         ],
-        "totalPrice": 1.7000000000000002
-      }
+        "totalPrice": 4.6
+      },
+      "id": 3
     }
   ]
 }

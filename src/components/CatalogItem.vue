@@ -19,14 +19,12 @@ export default {
   components: {
     Button,
   },
-  methods: {
-    addToCart() {
-      // console.log(this.good.id);
-      this.$emit("addItem", this.good.id);
-    },
-  },
-  data() {
-    return {};
+  setup({ good }, context) {
+    const addToCart = () => {
+      context.emit("addItem", good.id);
+    };
+
+    return { addToCart };
   },
 };
 </script>

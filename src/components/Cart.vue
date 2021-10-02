@@ -3,11 +3,11 @@
     <div class="cart__content">
       <div v-if="cart.goods.length">
         <CartItem
-          @removeItem="removeItemFromCart"
+          @removeItem="removeCartItem"
           @toggleSup="toggleSupMeal"
           v-for="good in cart.goods"
+          :good="good"
           :key="good.id"
-          :data="good"
         />
         <h4 class="cart__price">
           Total price: {{ cart.totalPrice.toFixed(2) }}$
@@ -53,77 +53,63 @@ import CartOrderForm from "./CartOrderForm.vue";
 import CartItem from "./CartItem.vue";
 import Button from "../UI/Button.vue";
 import { API } from "../config.js";
+import { useStore } from "vuex";
+import { computed, ref } from "@vue/reactivity";
+import { onMounted, onUpdated } from "@vue/runtime-core";
 
 export default {
-  props: ["data"],
   components: {
     CartOrderForm,
     CartItem,
     Button,
   },
-  methods: {
-    closeCart() {
-      this.$emit("close");
-    },
-    toggleSupMeal(burgerId, supId) {
-      const currentItem = this.cart.goods.find(
-        (burger) => burger.id === burgerId
-      );
+  setup(props, context) {
+    const store = useStore();
+    const cart = computed(() => store.state.cart);
+    const isOrdering = ref(false);
+    const madeOrder = ref(false);
+    const keyPostfix = Math.floor(Math.random() * 1000);
 
-      const currentSup = currentItem.supplements.find(
-        (sup) => sup.id === supId
-      );
-
-      if (currentSup.isAdded) {
-        this.cart.totalPrice -= currentSup.price;
-        currentItem.itemPrice -= currentSup.price;
-        this.cart.totalCal -= currentSup.cal;
-        currentItem.itemCal -= currentSup.cal;
-      } else {
-        this.cart.totalPrice += currentSup.price;
-        currentItem.itemPrice += currentSup.price;
-        this.cart.totalCal += currentSup.cal;
-        currentItem.itemCal += currentSup.cal;
-      }
-
-      currentSup.isAdded = !currentSup.isAdded;
-    },
-    async removeItemFromCart(itemId) {
-      const itemToDelete = this.cart.goods.find((good) => good.id === itemId);
-      this.cart.totalPrice -= itemToDelete.itemPrice;
-      this.cart.totalCal -= itemToDelete.itemCal;
-
-      this.cart.goods = this.cart.goods.filter((good) => good.id !== itemId);
-
-      await fetch(API + "cart/", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(this.cart),
-      });
-    },
-    openOrderingForm() {
-      this.isOrdering = true;
-    },
-    closeOrderingForm() {
-      this.isOrdering = false;
-    },
-    submitOrderingForm(userData) {
-      this.$emit("submitOrder", userData);
-      this.isOrdering = false;
-      this.madeOrder = true;
-    },
-  },
-  data() {
-    // console.log(this.data);
-    return {
-      cart: this.data,
-      isEmptyCart: true,
-      isOrdering: false,
-      madeOrder: false,
+    const closeCart = () => {
+      context.emit("closeCart");
     };
-  },
-  mounted() {
-    this.cart = this.data;
+
+    const removeCartItem = (itemId) => {
+      store.commit("removeCartItem", { itemId });
+    };
+
+    const toggleSupMeal = (burgerId, supId) => {
+      store.commit("toggleSupMeal", { burgerId, supId });
+    };
+
+    const openOrderingForm = () => {
+      isOrdering.value = true;
+    };
+    const closeOrderingForm = () => {
+      isOrdering.value = false;
+    };
+
+    const submitOrderingForm = (userData) => {
+      store.commit("submitOrder", userData);
+      isOrdering.value = false;
+      madeOrder.value = true;
+    };
+
+    onMounted(() => {
+      store.commit("loadCart");
+    });
+
+    return {
+      cart,
+      isOrdering,
+      madeOrder,
+      closeCart,
+      removeCartItem,
+      openOrderingForm,
+      closeOrderingForm,
+      toggleSupMeal,
+      submitOrderingForm,
+    };
   },
 };
 </script>

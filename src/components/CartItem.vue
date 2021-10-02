@@ -1,5 +1,5 @@
 <template>
-  <div class="cart-item" :data-id="good.id">
+  <div class="cart-item">
     <h3 class="cart-item__title">
       {{ good.item.title }}
       <Button @onClick="removeItem" class="button--remove-item">
@@ -46,21 +46,19 @@
 import Button from "../UI/Button.vue";
 
 export default {
-  props: ["data"],
+  props: ["good"],
   components: { Button },
-  data() {
-    // console.log(this.data);
-    return {
-      good: this.data,
+  setup(props, context) {
+    const good = props.good;
+
+    const removeItem = () => {
+      context.emit("removeItem", good.id);
     };
-  },
-  methods: {
-    toggleSup(supId) {
-      this.$emit("toggleSup", this.good.id, supId);
-    },
-    removeItem() {
-      this.$emit("removeItem", this.good.id);
-    },
+    const toggleSup = (supId) => {
+      context.emit("toggleSup", good.id, supId);
+    };
+
+    return { good, removeItem, toggleSup };
   },
 };
 </script>

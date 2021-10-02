@@ -1,39 +1,36 @@
 <template>
   <header class="header">
     <div class="container header-container">
-      <h1 class="header__heading">&#127828; Burger shop</h1>
-      <input
-        v-model="searchValue"
-        @keyup="onInputChange"
-        type="text"
-        class="input"
-        placeholder="&#x1F50E;"
-        maxlength="50"
-      />
+      <router-link :to="{ name: 'Catalog' }">
+        <h1 class="header__heading">&#127828; Burger shop</h1>
+      </router-link>
+      <div class="links">
+        <router-link :to="{ name: 'Catalog' }">Catalog</router-link>
+        <router-link :to="{ name: 'MyOrders' }">MyOrders</router-link>
+      </div>
       <Button @onClick="openCart" class="button--open-cart">&#128722;</Button>
     </div>
   </header>
 </template>
 
 <script>
+import { computed } from "@vue/reactivity";
+import { useStore } from "vuex";
 import Button from "../UI/Button.vue";
 export default {
-  emits: ["openCart", "onInputChange"],
+  emits: ["openCart"],
   components: {
     Button,
   },
-  methods: {
-    openCart() {
-      this.$emit("openCart");
-    },
-    onInputChange() {
-      this.$emit("onInputChange", this.searchValue);
-    },
-  },
-  data() {
-    return {
-      searchValue: "",
+  setup(props, context) {
+    const store = useStore();
+    const searchValue = computed(() => store.state.searchValue);
+
+    const openCart = () => {
+      context.emit("openCart");
     };
+
+    return { searchValue, openCart };
   },
 };
 </script>
@@ -52,17 +49,35 @@ export default {
 }
 
 .button--open-cart {
-  /* margin-left: auto; */
+  margin-left: auto;
   padding: 1rem;
 }
-.input {
-  height: 1.5rem;
-  border-radius: 10px;
-  border: 1px solid var(--color-main-bg);
-  max-width: 15rem;
-  width: 100%;
-  padding: 0 1rem;
-  margin: 0 2rem 0 auto;
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.26);
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  border-radius: 5px;
+  gap: 10px;
+}
+
+.links a {
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.links a.router-link-active {
+  background-color: var(--color-main-text);
+
+  cursor: default;
+}
+
+.links a:not(.router-link-active) {
+  color: var(--color-main-text);
+
+  background-color: var(--color-secondary-bg);
+}
+.links a:hover {
+  box-shadow: inset 0 0 0 1px var(--color-main-text);
 }
 </style>
