@@ -51,7 +51,7 @@ export default {
     });
 
     const addToCart = async (id) => {
-      store.commit("addToCart", { id });
+      store.dispatch("ADD_TO_CART", { id });
     };
 
     const submitOrder = async (userData) => {
@@ -59,7 +59,7 @@ export default {
     };
 
     onMounted(async () => {
-      store.commit("loadCatalog");
+      store.dispatch("LOAD_CATALOG");
     });
 
     return {

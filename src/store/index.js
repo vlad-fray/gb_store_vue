@@ -22,62 +22,83 @@ const state = {
 };
 
 const mutations = {
-  openCart(state) {
+  OPEN_CART(state) {
     state.showCart = true;
   },
-  closeCart(state) {
+  CLOSE_CART(state) {
     state.showCart = false;
   },
-  async loadCatalog(state) {
+  LOAD_CATALOG(state, payload) {
+    state.goods = payload;
+  },
+  LOAD_CART(state, payload) {
+    state.cart = payload;
+  },
+  LOAD_ORDERS(state, payload) {
+    state.orders = payload;
+  },
+  REMOVE_CART_ITEM(state, cart) {
+    state.cart = { ...cart };
+  },
+  CLEAN_CART(state) {
+    state.cart = {
+      totalPrice: 0,
+      totalCal: 0,
+      isOrdering: false,
+      goods: [],
+    };
+  },
+  ADD_TO_CART(state, cart) {
+    state.cart = { ...cart };
+  },
+  TOGGLE_SUP_MEAL({ cart }, { burger, burgerId }) {
+    let currentItem = cart.goods.find((bur) => bur.id === burgerId);
+    currentItem = { ...burger };
+  },
+  SUBMIT_ORDER(state, newOrder) {
+    state.orders = [...state.orders, newOrder];
+  },
+  LOAD_ERROR(state, error) {
+    state.loadError = error;
+  },
+};
+
+const actions = {
+  async LOAD_CATALOG({ commit }) {
     try {
       const res = await fetch(API + 'goodsList/');
       const data = await res.json();
 
-      state.goods = data;
+      commit('LOAD_CATALOG', data);
     } catch (err) {
-      state.loadError = err.message;
+      commit('LOAD_ERROR', err.message);
       console.error(err);
     }
   },
-  async loadCart(state) {
+  async LOAD_CART({ commit }) {
     try {
       const res = await fetch(API + 'cart/');
       const data = await res.json();
 
       if (!data.goods.length) return;
-      state.cart = data;
+      commit('LOAD_CART', data);
     } catch (err) {
-      state.loadError = err.message;
+      commit('LOAD_ERROR', err.message);
       console.error(err);
     }
   },
-  async loadOrders(state) {
+  async LOAD_ORDERS({ commit }) {
     try {
       const res = await fetch(API + 'ordersList/');
       const data = await res.json();
 
-      // console.log(data);
-      state.orders = data;
+      commit('LOAD_ORDERS', data);
     } catch (err) {
-      state.loadError = err.message;
+      commit('LOAD_ERROR', err.message);
       console.error(err);
     }
   },
-  async removeCartItem(state, { itemId }) {
-    const cart = state.cart;
-    const itemToDelete = cart.goods.find((good) => good.id === itemId);
-
-    cart.totalPrice -= itemToDelete.itemPrice;
-    cart.totalCal -= itemToDelete.itemCal;
-    cart.goods = cart.goods.filter((good) => good.id !== itemId);
-
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(cart),
-    });
-  },
-  async addToCart(state, { id }) {
+  async ADD_TO_CART({ commit, state }, { id }) {
     const { burgers, supplements } = state.goods;
     const currentGood = burgers.find((burger) => burger.id === id);
 
@@ -98,12 +119,48 @@ const mutations = {
       itemCal: currentGood.cal,
     };
 
-    state.cart = {
+    const newCart = {
       ...state.cart,
       totalPrice: state.cart.totalPrice + currentGood.price,
       totalCal: state.cart.totalCal + currentGood.cal,
       goods: [...state.cart.goods, newCartItem],
     };
+
+    commit('ADD_TO_CART', newCart);
+
+    await fetch(API + 'cart/', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newCart),
+    });
+  },
+  async REMOVE_CART_ITEM({ commit, state, dispatch }, { itemId }) {
+    const cart = state.cart;
+    const itemToDelete = cart.goods.find((good) => good.id === itemId);
+
+    if (cart.goods.length < 2) {
+      await dispatch('CLEAN_CART');
+      console.log('return');
+      return;
+    }
+
+    const newCart = {
+      ...cart,
+      totalPrice: cart.totalPrice - itemToDelete.itemPrice,
+      totalCal: cart.totalCal - itemToDelete.itemCal,
+      goods: cart.goods.filter((good) => good.id !== itemId),
+    };
+
+    commit('REMOVE_CART_ITEM', newCart);
+
+    await fetch(API + 'cart/', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newCart),
+    });
+  },
+  async CLEAN_CART({ commit, state }) {
+    await commit('CLEAN_CART');
 
     await fetch(API + 'cart/', {
       method: 'PUT',
@@ -111,10 +168,10 @@ const mutations = {
       body: JSON.stringify(state.cart),
     });
   },
-  async toggleSupMeal(state, { burgerId, supId }) {
+  async TOGGLE_SUP_MEAL({ commit, state }, { burgerId, supId }) {
     const cart = state.cart;
 
-    const currentItem = cart.goods.find((burger) => burger.id === burgerId);
+    const currentItem = { ...cart.goods.find((burger) => burger.id === burgerId) };
     const currentSup = currentItem.supplements.find((sup) => sup.id === supId);
 
     if (currentSup.isAdded) {
@@ -128,11 +185,9 @@ const mutations = {
       cart.totalCal += currentSup.cal;
       currentItem.itemCal += currentSup.cal;
     }
-
     currentSup.isAdded = !currentSup.isAdded;
 
-    //is needed to make a new key for 'v-for'
-    currentItem.id = 'burger' + Math.floor(Math.random() * 1000);
+    await commit('TOGGLE_SUP_MEAL', { burger: currentItem, burgerId });
 
     await fetch(API + 'cart/', {
       method: 'PUT',
@@ -140,7 +195,7 @@ const mutations = {
       body: JSON.stringify(state.cart),
     });
   },
-  async submitOrder(state, { userData }) {
+  async SUBMIT_ORDER({ commit, state, dispatch }, { userData }) {
     const cart = state.cart;
 
     const goods = cart.goods.map((good) => {
@@ -168,40 +223,23 @@ const mutations = {
       body: JSON.stringify(newOrdersListItem),
     });
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        totalPrice: 0,
-        totalCal: 0,
-        isOrdering: false,
-        goods: [],
-      }),
-    });
-
-    state.cart = {
-      totalPrice: 0,
-      totalCal: 0,
-      isOrdering: false,
-      goods: [],
-    };
+    await dispatch('CLEAN_CART');
+    await commit('SUBMIT_ORDER', newOrdersListItem);
   },
-  async removeOrder(state, { id }) {
-    state.orders = state.orders.filter((order) => order.id !== id);
-    const orders = state.orders;
-
-    console.log(API);
+  async REMOVE_ORDER({ dispatch }, { id }) {
     await fetch(API + 'ordersList/' + id, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     });
+
+    await dispatch('LOAD_ORDERS');
   },
 };
 
 export default createStore({
   state,
   mutations,
-  actions: {},
+  actions,
   modules: {},
   getters: {},
 });

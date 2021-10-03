@@ -21,11 +21,11 @@ export default {
     const showCart = computed(() => store.state.showCart);
 
     const openCart = () => {
-      store.commit("openCart");
+      store.commit("OPEN_CART");
     };
 
     const closeCart = () => {
-      store.commit("closeCart");
+      store.commit("CLOSE_CART");
     };
 
     return { showCart, openCart, closeCart };
