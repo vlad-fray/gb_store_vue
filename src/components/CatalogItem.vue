@@ -4,7 +4,7 @@
     <div class="catalog-item__content">
       <h3 class="catalog-item__heading">{{ good.title }}</h3>
       <p class="catalog-item__info">Price: ${{ good.price }}</p>
-      <p class="catalog-item__info">Calorie: ${{ good.cal }}</p>
+      <p class="catalog-item__info">Calorie: {{ good.cal }}kcal</p>
       <Button @onClick="addToCart" class="catalog-item__button" type="button">
         Add to cart
       </Button>

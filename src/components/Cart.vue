@@ -55,7 +55,6 @@ import Button from "../UI/Button.vue";
 import { useStore } from "vuex";
 import { computed, ref } from "@vue/reactivity";
 import { onMounted, onUpdated } from "@vue/runtime-core";
-// import getDocument from "@/composables/getDocument";
 
 export default {
   components: {
@@ -70,7 +69,6 @@ export default {
 
     const isOrdering = ref(false);
     const madeOrder = ref(false);
-    // const { document } = getDocument("store", "cart");
 
     const closeCart = () => {
       context.emit("closeCart");
@@ -158,5 +156,6 @@ export default {
 .button--cart-ordering:hover {
   color: var(--color-accent);
   background-color: white;
+  box-shadow: 0 0 0 1px var(--color-accent);
 }
 </style>
