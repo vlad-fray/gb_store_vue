@@ -166,37 +166,41 @@ const actions = {
   async CLEAN_CART({ commit, state }) {
     await commit('CLEAN_CART');
 
-    console.log(state.cart);
     await projectFirestore
       .collection('store')
       .doc('cart')
       .set(state.cart);
   },
-  async TOGGLE_SUP_MEAL({ commit, state }, { burgerId, supId }) {
-    const cart = state.cart;
+  async TOGGLE_SUP_MEAL({ commit, state, dispatch }, { burgerId, supId }) {
+    let { totalPrice, totalCal } = state.cart;
 
-    const currentItem = { ...cart.goods.find((burger) => burger.id === burgerId) };
-    const currentSup = currentItem.supplements.find((sup) => sup.id === supId);
+    const newCart = state.cart.goods.map((burger) => {
+      if (burger.id !== burgerId) return burger;
 
-    if (currentSup.isAdded) {
-      cart.totalPrice -= currentSup.price;
-      currentItem.itemPrice -= currentSup.price;
-      cart.totalCal -= currentSup.cal;
-      currentItem.itemCal -= currentSup.cal;
-    } else {
-      cart.totalPrice += currentSup.price;
-      currentItem.itemPrice += currentSup.price;
-      cart.totalCal += currentSup.cal;
-      currentItem.itemCal += currentSup.cal;
-    }
-    currentSup.isAdded = !currentSup.isAdded;
+      const sup = burger.supplements.find((sup) => sup.id === supId);
 
-    await commit('TOGGLE_SUP_MEAL', { burger: currentItem, burgerId });
+      if (sup.isAdded) {
+        totalPrice -= sup.price;
+        burger.itemPrice -= sup.price;
+        totalCal -= sup.cal;
+        burger.itemCal -= sup.cal;
+      } else {
+        totalPrice += sup.price;
+        burger.itemPrice += sup.price;
+        totalCal += sup.cal;
+        burger.itemCal += sup.cal;
+      }
+      sup.isAdded = !sup.isAdded;
+
+      return burger;
+    });
 
     await projectFirestore
       .collection('store')
       .doc('cart')
-      .update(state.cart);
+      .update({ goods: newCart, totalPrice, totalCal });
+
+    await dispatch('LOAD_CART');
   },
   async SUBMIT_ORDER({ commit, state, dispatch }, userData) {
     const cart = state.cart;
@@ -226,7 +230,6 @@ const actions = {
     await commit('SUBMIT_ORDER', newOrdersListItem);
   },
   async REMOVE_ORDER({ dispatch }, { id }) {
-    console.log(id);
     await projectFirestore
       .collection('orders')
       .doc(id)
