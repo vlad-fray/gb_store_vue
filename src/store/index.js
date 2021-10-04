@@ -1,10 +1,9 @@
 import { createStore } from 'vuex';
-import { API } from './../config';
+import { projectFirestore } from '../firebase/config';
 
 // empty cart = {
 //   totalPrice: 0,
 //   totalCal: 0,
-//   isOrdering: false,
 //   goods: [],
 // }
 
@@ -14,7 +13,6 @@ const state = {
   cart: {
     totalPrice: 0,
     totalCal: 0,
-    isOrdering: false,
     goods: [],
   },
   showCart: false,
@@ -44,7 +42,6 @@ const mutations = {
     state.cart = {
       totalPrice: 0,
       totalCal: 0,
-      isOrdering: false,
       goods: [],
     };
   },
@@ -66,8 +63,12 @@ const mutations = {
 const actions = {
   async LOAD_CATALOG({ commit }) {
     try {
-      const res = await fetch(API + 'goodsList/');
-      const data = await res.json();
+      const doc = await projectFirestore
+        .collection('store')
+        .doc('goodsList')
+        .get();
+
+      const data = doc.data();
 
       commit('LOAD_CATALOG', data);
     } catch (err) {
@@ -77,8 +78,12 @@ const actions = {
   },
   async LOAD_CART({ commit }) {
     try {
-      const res = await fetch(API + 'cart/');
-      const data = await res.json();
+      const doc = await projectFirestore
+        .collection('store')
+        .doc('cart')
+        .get();
+
+      const data = doc.data();
 
       if (!data.goods.length) return;
       commit('LOAD_CART', data);
@@ -89,8 +94,10 @@ const actions = {
   },
   async LOAD_ORDERS({ commit }) {
     try {
-      const res = await fetch(API + 'ordersList/');
-      const data = await res.json();
+      const doc = await projectFirestore.collection('orders').get();
+      const data = doc.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
 
       commit('LOAD_ORDERS', data);
     } catch (err) {
@@ -128,11 +135,10 @@ const actions = {
 
     commit('ADD_TO_CART', newCart);
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newCart),
-    });
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .update(newCart);
   },
   async REMOVE_CART_ITEM({ commit, state, dispatch }, { itemId }) {
     const cart = state.cart;
@@ -140,7 +146,6 @@ const actions = {
 
     if (cart.goods.length < 2) {
       await dispatch('CLEAN_CART');
-      console.log('return');
       return;
     }
 
@@ -153,20 +158,19 @@ const actions = {
 
     commit('REMOVE_CART_ITEM', newCart);
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newCart),
-    });
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .update(newCart);
   },
   async CLEAN_CART({ commit, state }) {
     await commit('CLEAN_CART');
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.cart),
-    });
+    console.log(state.cart);
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .set(state.cart);
   },
   async TOGGLE_SUP_MEAL({ commit, state }, { burgerId, supId }) {
     const cart = state.cart;
@@ -189,13 +193,12 @@ const actions = {
 
     await commit('TOGGLE_SUP_MEAL', { burger: currentItem, burgerId });
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.cart),
-    });
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .update(state.cart);
   },
-  async SUBMIT_ORDER({ commit, state, dispatch }, { userData }) {
+  async SUBMIT_ORDER({ commit, state, dispatch }, userData) {
     const cart = state.cart;
 
     const goods = cart.goods.map((good) => {
@@ -217,20 +220,17 @@ const actions = {
       },
     };
 
-    await fetch(API + 'ordersList/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newOrdersListItem),
-    });
+    await projectFirestore.collection('orders').add(newOrdersListItem);
 
     await dispatch('CLEAN_CART');
     await commit('SUBMIT_ORDER', newOrdersListItem);
   },
   async REMOVE_ORDER({ dispatch }, { id }) {
-    await fetch(API + 'ordersList/' + id, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    console.log(id);
+    await projectFirestore
+      .collection('orders')
+      .doc(id)
+      .delete();
 
     await dispatch('LOAD_ORDERS');
   },
