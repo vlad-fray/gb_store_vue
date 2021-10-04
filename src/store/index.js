@@ -236,10 +236,28 @@ const actions = {
   },
 };
 
+const getters = {
+  getCart(state) {
+    return state.cart;
+  },
+  getCatalog(state) {
+    return state.goods;
+  },
+  getCartGoods(state) {
+    return state.cart.goods;
+  },
+  getOrders(state) {
+    return state.orders;
+  },
+  getShowCart(state) {
+    return state.showCart;
+  },
+};
+
 export default createStore({
   state,
   mutations,
   actions,
   modules: {},
-  getters: {},
+  getters,
 });

@@ -28,7 +28,6 @@
 <script>
 import "@/assets/base-styles.css";
 import CatalogItem from "@/components/CatalogItem.vue";
-import { API } from "@/config.js";
 import { computed, ref } from "@vue/reactivity";
 import { onMounted, onUpdated } from "@vue/runtime-core";
 import { useStore } from "vuex";
@@ -37,15 +36,14 @@ export default {
   components: { CatalogItem },
   setup() {
     const store = useStore();
-    const goods = computed(() => store.state.goods);
-    const burgers = computed(() => goods.value?.burgers);
+    const catalog = computed(() => store.getters.getCatalog);
 
     const serverError = ref(false);
     const searchValue = ref("");
 
     const filteredBurgers = computed(() => {
-      if (!goods.value?.burgers) return null;
-      return goods.value.burgers.filter((burger) =>
+      if (!catalog.value?.burgers) return null;
+      return catalog.value.burgers.filter((burger) =>
         burger.title.toLowerCase().includes(searchValue.value.toLowerCase())
       );
     });
@@ -63,7 +61,6 @@ export default {
     });
 
     return {
-      burgers,
       serverError,
       searchValue,
       filteredBurgers,

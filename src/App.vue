@@ -18,7 +18,7 @@ export default {
   components: { Header, Cart, Modal },
   setup() {
     const store = useStore();
-    const showCart = computed(() => store.state.showCart);
+    const showCart = computed(() => store.getters.getShowCart);
 
     const openCart = () => {
       store.commit("OPEN_CART");

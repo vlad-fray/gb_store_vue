@@ -23,7 +23,7 @@ export default {
     const store = useStore();
 
     const ordersList = computed(() => {
-      return store.state.orders.map((order) => {
+      return store.getters.getOrders.map((order) => {
         const { id } = order;
         const { goods, totalPrice } = order.orderData;
         return { id, goods, totalPrice };

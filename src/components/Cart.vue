@@ -65,8 +65,8 @@ export default {
   },
   setup(props, context) {
     const store = useStore();
-    const cart = computed(() => store.state.cart);
-    const goods = computed(() => store.state.cart.goods);
+    const cart = computed(() => store.getters.getCart);
+    const goods = computed(() => store.getters.getCartGoods);
 
     const isOrdering = ref(false);
     const madeOrder = ref(false);
@@ -92,7 +92,6 @@ export default {
     };
 
     const submitOrderingForm = async (userData) => {
-      // store.commit("submitOrder", userData);
       store.dispatch("SUBMIT_ORDER", userData);
       isOrdering.value = false;
       madeOrder.value = true;
