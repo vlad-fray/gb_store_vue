@@ -1,10 +1,9 @@
 import { createStore } from 'vuex';
-import { API } from './../config';
+import { projectFirestore } from '../firebase/config';
 
 // empty cart = {
 //   totalPrice: 0,
 //   totalCal: 0,
-//   isOrdering: false,
 //   goods: [],
 // }
 
@@ -14,7 +13,6 @@ const state = {
   cart: {
     totalPrice: 0,
     totalCal: 0,
-    isOrdering: false,
     goods: [],
   },
   showCart: false,
@@ -22,62 +20,92 @@ const state = {
 };
 
 const mutations = {
-  openCart(state) {
+  OPEN_CART(state) {
     state.showCart = true;
   },
-  closeCart(state) {
+  CLOSE_CART(state) {
     state.showCart = false;
   },
-  async loadCatalog(state) {
-    try {
-      const res = await fetch(API + 'goodsList/');
-      const data = await res.json();
+  LOAD_CATALOG(state, payload) {
+    state.goods = payload;
+  },
+  LOAD_CART(state, payload) {
+    state.cart = payload;
+  },
+  LOAD_ORDERS(state, payload) {
+    state.orders = payload;
+  },
+  REMOVE_CART_ITEM(state, cart) {
+    state.cart = { ...cart };
+  },
+  CLEAN_CART(state) {
+    state.cart = {
+      totalPrice: 0,
+      totalCal: 0,
+      goods: [],
+    };
+  },
+  ADD_TO_CART(state, cart) {
+    state.cart = { ...cart };
+  },
+  TOGGLE_SUP_MEAL({ cart }, { burger, burgerId }) {
+    let currentItem = cart.goods.find((bur) => bur.id === burgerId);
+    currentItem = { ...burger };
+  },
+  SUBMIT_ORDER(state, newOrder) {
+    state.orders = [...state.orders, newOrder];
+  },
+  LOAD_ERROR(state, error) {
+    state.loadError = error;
+  },
+};
 
-      state.goods = data;
+const actions = {
+  async LOAD_CATALOG({ commit }) {
+    try {
+      const doc = await projectFirestore
+        .collection('store')
+        .doc('goodsList')
+        .get();
+
+      const data = doc.data();
+
+      commit('LOAD_CATALOG', data);
     } catch (err) {
-      state.loadError = err.message;
+      commit('LOAD_ERROR', err.message);
       console.error(err);
     }
   },
-  async loadCart(state) {
+  async LOAD_CART({ commit }) {
     try {
-      const res = await fetch(API + 'cart/');
-      const data = await res.json();
+      const doc = await projectFirestore
+        .collection('store')
+        .doc('cart')
+        .get();
+
+      const data = doc.data();
 
       if (!data.goods.length) return;
-      state.cart = data;
+      commit('LOAD_CART', data);
     } catch (err) {
-      state.loadError = err.message;
+      commit('LOAD_ERROR', err.message);
       console.error(err);
     }
   },
-  async loadOrders(state) {
+  async LOAD_ORDERS({ commit }) {
     try {
-      const res = await fetch(API + 'ordersList/');
-      const data = await res.json();
+      const doc = await projectFirestore.collection('orders').get();
+      const data = doc.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
 
-      // console.log(data);
-      state.orders = data;
+      commit('LOAD_ORDERS', data);
     } catch (err) {
-      state.loadError = err.message;
+      commit('LOAD_ERROR', err.message);
       console.error(err);
     }
   },
-  async removeCartItem(state, { itemId }) {
-    const cart = state.cart;
-    const itemToDelete = cart.goods.find((good) => good.id === itemId);
-
-    cart.totalPrice -= itemToDelete.itemPrice;
-    cart.totalCal -= itemToDelete.itemCal;
-    cart.goods = cart.goods.filter((good) => good.id !== itemId);
-
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(cart),
-    });
-  },
-  async addToCart(state, { id }) {
+  async ADD_TO_CART({ commit, state }, { id }) {
     const { burgers, supplements } = state.goods;
     const currentGood = burgers.find((burger) => burger.id === id);
 
@@ -98,49 +126,83 @@ const mutations = {
       itemCal: currentGood.cal,
     };
 
-    state.cart = {
+    const newCart = {
       ...state.cart,
       totalPrice: state.cart.totalPrice + currentGood.price,
       totalCal: state.cart.totalCal + currentGood.cal,
       goods: [...state.cart.goods, newCartItem],
     };
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.cart),
-    });
+    commit('ADD_TO_CART', newCart);
+
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .update(newCart);
   },
-  async toggleSupMeal(state, { burgerId, supId }) {
+  async REMOVE_CART_ITEM({ commit, state, dispatch }, { itemId }) {
     const cart = state.cart;
+    const itemToDelete = cart.goods.find((good) => good.id === itemId);
 
-    const currentItem = cart.goods.find((burger) => burger.id === burgerId);
-    const currentSup = currentItem.supplements.find((sup) => sup.id === supId);
-
-    if (currentSup.isAdded) {
-      cart.totalPrice -= currentSup.price;
-      currentItem.itemPrice -= currentSup.price;
-      cart.totalCal -= currentSup.cal;
-      currentItem.itemCal -= currentSup.cal;
-    } else {
-      cart.totalPrice += currentSup.price;
-      currentItem.itemPrice += currentSup.price;
-      cart.totalCal += currentSup.cal;
-      currentItem.itemCal += currentSup.cal;
+    if (cart.goods.length < 2) {
+      await dispatch('CLEAN_CART');
+      return;
     }
 
-    currentSup.isAdded = !currentSup.isAdded;
+    const newCart = {
+      ...cart,
+      totalPrice: cart.totalPrice - itemToDelete.itemPrice,
+      totalCal: cart.totalCal - itemToDelete.itemCal,
+      goods: cart.goods.filter((good) => good.id !== itemId),
+    };
 
-    //is needed to make a new key for 'v-for'
-    currentItem.id = 'burger' + Math.floor(Math.random() * 1000);
+    commit('REMOVE_CART_ITEM', newCart);
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.cart),
-    });
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .update(newCart);
   },
-  async submitOrder(state, { userData }) {
+  async CLEAN_CART({ commit, state }) {
+    await commit('CLEAN_CART');
+
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .set(state.cart);
+  },
+  async TOGGLE_SUP_MEAL({ commit, state, dispatch }, { burgerId, supId }) {
+    let { totalPrice, totalCal } = state.cart;
+
+    const newCart = state.cart.goods.map((burger) => {
+      if (burger.id !== burgerId) return burger;
+
+      const sup = burger.supplements.find((sup) => sup.id === supId);
+
+      if (sup.isAdded) {
+        totalPrice -= sup.price;
+        burger.itemPrice -= sup.price;
+        totalCal -= sup.cal;
+        burger.itemCal -= sup.cal;
+      } else {
+        totalPrice += sup.price;
+        burger.itemPrice += sup.price;
+        totalCal += sup.cal;
+        burger.itemCal += sup.cal;
+      }
+      sup.isAdded = !sup.isAdded;
+
+      return burger;
+    });
+
+    await projectFirestore
+      .collection('store')
+      .doc('cart')
+      .update({ goods: newCart, totalPrice, totalCal });
+
+    await dispatch('LOAD_CART');
+  },
+  async SUBMIT_ORDER({ commit, state, dispatch }, userData) {
     const cart = state.cart;
 
     const goods = cart.goods.map((good) => {
@@ -162,46 +224,43 @@ const mutations = {
       },
     };
 
-    await fetch(API + 'ordersList/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newOrdersListItem),
-    });
+    await projectFirestore.collection('orders').add(newOrdersListItem);
 
-    await fetch(API + 'cart/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        totalPrice: 0,
-        totalCal: 0,
-        isOrdering: false,
-        goods: [],
-      }),
-    });
-
-    state.cart = {
-      totalPrice: 0,
-      totalCal: 0,
-      isOrdering: false,
-      goods: [],
-    };
+    await dispatch('CLEAN_CART');
+    await commit('SUBMIT_ORDER', newOrdersListItem);
   },
-  async removeOrder(state, { id }) {
-    state.orders = state.orders.filter((order) => order.id !== id);
-    const orders = state.orders;
+  async REMOVE_ORDER({ dispatch }, { id }) {
+    await projectFirestore
+      .collection('orders')
+      .doc(id)
+      .delete();
 
-    console.log(API);
-    await fetch(API + 'ordersList/' + id, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    await dispatch('LOAD_ORDERS');
+  },
+};
+
+const getters = {
+  getCart(state) {
+    return state.cart;
+  },
+  getCatalog(state) {
+    return state.goods;
+  },
+  getCartGoods(state) {
+    return state.cart.goods;
+  },
+  getOrders(state) {
+    return state.orders;
+  },
+  getShowCart(state) {
+    return state.showCart;
   },
 };
 
 export default createStore({
   state,
   mutations,
-  actions: {},
+  actions,
   modules: {},
-  getters: {},
+  getters,
 });

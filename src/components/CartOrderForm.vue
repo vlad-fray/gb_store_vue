@@ -3,7 +3,13 @@
     <h3 class="order-form__heading">Ordering</h3>
     <label class="order-input">
       Name* :
-      <input v-model="name" id="name" type="text" placeholder="Ivan Ivanov" />
+      <input
+        v-model="name"
+        id="name"
+        type="text"
+        placeholder="Ivan Ivanov"
+        maxlength="30"
+      />
       <p v-if="!isValidName" class="order-input--error">
         Name input has to be not empty
       </p>
@@ -16,6 +22,7 @@
         id="number"
         type="text"
         placeholder="+7(000)000-0000"
+        maxlength="20"
       />
       <p v-if="!isValidNumber" class="order-input--error">
         Number value is not valid
@@ -29,6 +36,7 @@
         id="email"
         type="email"
         placeholder="mymail@mail.ru"
+        maxlength="50"
       />
       <p v-if="!isValidEmail" class="order-input--error">
         Email value is not valid
@@ -52,55 +60,91 @@
 </template>
 
 <script>
+import { ref } from "@vue/reactivity";
 import Button from "../UI/Button.vue";
+
+const validateNameInput = (value) => {
+  const regExp = /^[a-zа-яё\s]+$/gi;
+  if (regExp.test(value.trim())) return value.trim();
+  return null;
+};
+
+const validateNumberInput = (value) => {
+  const nums = value
+    .split("")
+    .filter((letter) => Number.isFinite(+letter))
+    .join("");
+
+  if (nums.length === 11 && +nums[0] === 7) return "+" + nums;
+  if (nums.length === 11 && +nums[0] === 8) return nums;
+
+  return null;
+};
+
+const validateEmailInput = (value) => {
+  const regExp = /^[a-zA-Z]{1}[a-zA-Z\d]*@[a-z]{2,6}.[a-z]{2,4}$/;
+  console.log(regExp.test(value.trim()));
+  if (regExp.test(value.trim())) return value;
+
+  return null;
+};
+
 export default {
   components: { Button },
-  methods: {
-    closeForm() {
-      this.$emit("closeForm");
-    },
-    submitForm() {
-      this.isValidName = true;
-      this.isValidNumber = true;
-      this.isValidEmail = true;
-      if (!this.validateNameInput(this.name)) {
-        console.log("wow");
-        this.isValidName = false;
-      } else if (!this.validateNumberInput(this.number)) {
-        console.log("wow2");
-        this.isValidNumber = false;
-      } else if (!this.validateEmailInput(this.email)) {
-        console.log("wow3");
-        this.isValidEmail = false;
-      } else {
-        this.$emit("submitForm", {
-          name: this.name,
-          number: this.number,
-          email: this.email,
-        });
+  setup(props, context) {
+    const name = ref("");
+    const number = ref("");
+    const email = ref("");
+    const isValidName = ref(true);
+    const isValidNumber = ref(true);
+    const isValidEmail = ref(true);
+
+    const closeForm = () => {
+      context.emit("closeForm");
+    };
+
+    const submitForm = () => {
+      isValidName.value = true;
+      isValidNumber.value = true;
+      isValidEmail.value = true;
+
+      const userData = {
+        name: null,
+        number: null,
+        email: "",
+      };
+
+      userData.name = validateNameInput(name.value);
+      if (!userData.name) {
+        isValidName.value = false;
+        return;
       }
-    },
-    validateNameInput(value) {
-      const regExp = /^[a-zа-яё\s]+$/gi;
-      return regExp.test(value.trim());
-    },
-    validateNumberInput(value) {
-      const regExp = /^\+7\(\d{3}\)\d{3}-\d{4}$/g;
-      return regExp.test(value.trim());
-    },
-    validateEmailInput(value) {
-      const regExp = /^[a-zA-z]{1}[a-zA-Z\.-\d]*@[a-z]{2,6}.[a-z]{2,4}$/;
-      return regExp.test(value.trim()) || value.trim().length === 0;
-    },
-  },
-  data() {
+
+      userData.number = validateNumberInput(number.value);
+      if (!userData.number) {
+        isValidNumber.value = false;
+        return;
+      }
+
+      if (email.value.trim().length !== 0) {
+        userData.email = validateEmailInput(email.value);
+        if (!userData.email) {
+          isValidEmail.value = false;
+          return;
+        }
+      }
+
+      context.emit("submitForm", userData);
+    };
     return {
-      name: "",
-      number: "",
-      email: "",
-      isValidName: true,
-      isValidNumber: true,
-      isValidEmail: true,
+      name,
+      number,
+      email,
+      isValidName,
+      isValidNumber,
+      isValidEmail,
+      closeForm,
+      submitForm,
     };
   },
 };
@@ -156,6 +200,7 @@ export default {
 .button--cart-make-order:hover {
   color: var(--color-accent);
   background-color: white;
+  box-shadow: 0 0 0 1px var(--color-accent);
 }
 .button--close-order {
   padding: 1rem;

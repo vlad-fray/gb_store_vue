@@ -18,14 +18,14 @@ export default {
   components: { Header, Cart, Modal },
   setup() {
     const store = useStore();
-    const showCart = computed(() => store.state.showCart);
+    const showCart = computed(() => store.getters.getShowCart);
 
     const openCart = () => {
-      store.commit("openCart");
+      store.commit("OPEN_CART");
     };
 
     const closeCart = () => {
-      store.commit("closeCart");
+      store.commit("CLOSE_CART");
     };
 
     return { showCart, openCart, closeCart };

@@ -1,6 +1,6 @@
 <template>
   <div class="orders">
-    <div v-if="orders">
+    <div v-if="orders.length">
       <Order
         v-for="order in orders"
         :key="order.id"
@@ -23,7 +23,7 @@ export default {
     const store = useStore();
 
     const ordersList = computed(() => {
-      return store.state.orders.map((order) => {
+      return store.getters.getOrders.map((order) => {
         const { id } = order;
         const { goods, totalPrice } = order.orderData;
         return { id, goods, totalPrice };
@@ -44,12 +44,11 @@ export default {
     });
 
     const removeOrder = (id) => {
-      console.log(id);
-      store.commit("removeOrder", { id });
+      store.dispatch("REMOVE_ORDER", { id });
     };
 
     onMounted(() => {
-      store.commit("loadOrders");
+      store.dispatch("LOAD_ORDERS");
     });
     return { orders, removeOrder };
   },

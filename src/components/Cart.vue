@@ -1,13 +1,13 @@
 <template>
   <div v-if="!isOrdering && !madeOrder" class="cart">
     <div class="cart__content">
-      <div v-if="cart.goods.length">
+      <div v-if="goods.length">
         <CartItem
           @removeItem="removeCartItem"
           @toggleSup="toggleSupMeal"
-          v-for="good in cart.goods"
+          v-for="good in goods"
           :good="good"
-          :key="good.id"
+          :key="good"
         />
         <h4 class="cart__price">
           Total price: {{ cart.totalPrice.toFixed(2) }}$
@@ -20,7 +20,7 @@
     </div>
     <div class="cart__actions">
       <Button
-        v-if="cart.goods.length"
+        v-if="goods.length"
         @onClick="openOrderingForm"
         class="button--cart-ordering"
       >
@@ -52,7 +52,6 @@
 import CartOrderForm from "./CartOrderForm.vue";
 import CartItem from "./CartItem.vue";
 import Button from "../UI/Button.vue";
-import { API } from "../config.js";
 import { useStore } from "vuex";
 import { computed, ref } from "@vue/reactivity";
 import { onMounted, onUpdated } from "@vue/runtime-core";
@@ -65,21 +64,22 @@ export default {
   },
   setup(props, context) {
     const store = useStore();
-    const cart = computed(() => store.state.cart);
+    const cart = computed(() => store.getters.getCart);
+    const goods = computed(() => store.getters.getCartGoods);
+
     const isOrdering = ref(false);
     const madeOrder = ref(false);
-    const keyPostfix = Math.floor(Math.random() * 1000);
 
     const closeCart = () => {
       context.emit("closeCart");
     };
 
     const removeCartItem = (itemId) => {
-      store.commit("removeCartItem", { itemId });
+      store.dispatch("REMOVE_CART_ITEM", { itemId });
     };
 
     const toggleSupMeal = (burgerId, supId) => {
-      store.commit("toggleSupMeal", { burgerId, supId });
+      store.dispatch("TOGGLE_SUP_MEAL", { burgerId, supId });
     };
 
     const openOrderingForm = () => {
@@ -89,18 +89,23 @@ export default {
       isOrdering.value = false;
     };
 
-    const submitOrderingForm = (userData) => {
-      store.commit("submitOrder", userData);
+    const submitOrderingForm = async (userData) => {
+      store.dispatch("SUBMIT_ORDER", userData);
       isOrdering.value = false;
       madeOrder.value = true;
     };
 
     onMounted(() => {
-      store.commit("loadCart");
+      store.dispatch("LOAD_CART");
+    });
+
+    onUpdated(() => {
+      // console.log("cart updated");
     });
 
     return {
       cart,
+      goods,
       isOrdering,
       madeOrder,
       closeCart,
@@ -151,5 +156,6 @@ export default {
 .button--cart-ordering:hover {
   color: var(--color-accent);
   background-color: white;
+  box-shadow: 0 0 0 1px var(--color-accent);
 }
 </style>

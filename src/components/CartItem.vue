@@ -6,8 +6,6 @@
         &#215;
       </Button>
     </h3>
-    <p class="cart-item__info">{{ good.item.price }}$</p>
-    <p class="cart-item__info">{{ good.item.cal }} cal</p>
 
     <div class="cart-item__supplements">
       <h4>Add it to your burger:</h4>

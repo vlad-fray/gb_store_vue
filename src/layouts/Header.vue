@@ -8,7 +8,9 @@
         <router-link :to="{ name: 'Catalog' }">Catalog</router-link>
         <router-link :to="{ name: 'MyOrders' }">MyOrders</router-link>
       </div>
-      <Button @onClick="openCart" class="button--open-cart">&#128722;</Button>
+      <Button @onClick="openCart" class="button--open-cart">
+        &#128722; <span v-if="amount">{{ amount }}</span>
+      </Button>
     </div>
   </header>
 </template>
@@ -24,13 +26,13 @@ export default {
   },
   setup(props, context) {
     const store = useStore();
-    const searchValue = computed(() => store.state.searchValue);
+    const amount = computed(() => store.getters.getCart.goods.length);
 
     const openCart = () => {
       context.emit("openCart");
     };
 
-    return { searchValue, openCart };
+    return { openCart, amount };
   },
 };
 </script>
